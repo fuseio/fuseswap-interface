@@ -66,7 +66,6 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' | 'bridge' })
         Bridge
       </StyledNavLink>
       <Settings />
-
     </Tabs>
   )
 }

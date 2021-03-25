@@ -223,13 +223,13 @@ export default function SettingsTab() {
                 toggle={
                   expertMode
                     ? () => {
-                      toggleExpertMode()
-                      setShowConfirmation(false)
-                    }
+                        toggleExpertMode()
+                        setShowConfirmation(false)
+                      }
                     : () => {
-                      toggle()
-                      setShowConfirmation(true)
-                    }
+                        toggle()
+                        setShowConfirmation(true)
+                      }
                 }
               />
             </RowBetween>

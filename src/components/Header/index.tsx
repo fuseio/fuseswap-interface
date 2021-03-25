@@ -53,7 +53,7 @@ const Title = styled.a`
   display: flex;
   align-items: center;
   pointer-events: auto;
-  margin-left:1rem;
+  margin-left: 1rem;
 
   :hover {
     cursor: pointer;
@@ -128,29 +128,28 @@ const MobileBalanceElement = styled.div`
 
 const MobileBalanceText = styled(Text)`
   padding: 0.5rem;
-  font-weight: 500;  
+  font-weight: 500;
 `
 const StyledMenuButton = styled.button`
-position: relative;
-width: 100%;
-height: 100%;
-border: none;
-background-color: transparent;
-margin: 0;
-padding: 0;
-height: 35px;
-background-color: ${({ theme }) => theme.bg3};
-margin-left: 8px;
-padding: 0.15rem 0.5rem;
-border-radius: 0.25rem;
-:hover,
-:focus {
-  cursor: pointer;
-  outline: none;
-  background-color: ${({ theme }) => theme.bg4};
-}
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  height: 35px;
+  background-color: ${({ theme }) => theme.bg3};
+  margin-left: 8px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  :hover,
+  :focus {
+    cursor: pointer;
+    outline: none;
+    background-color: ${({ theme }) => theme.bg4};
+  }
 `
-
 
 export const NETWORK_LABELS: any = {
   [ChainId.MAINNET]: 'Ethereum',
@@ -158,7 +157,7 @@ export const NETWORK_LABELS: any = {
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
-  [ChainId.FUSE]: 'Fuse',
+  [ChainId.FUSE]: 'Fuse'
 }
 
 export default function Header() {
@@ -171,7 +170,7 @@ export default function Header() {
     <HeaderFrame>
       <RowBetween style={{ alignItems: 'flex-start' }} padding="1rem 1rem 0 1rem">
         <HeaderElement>
-        <Menu />
+          <Menu />
           <Title href="." style={{ textDecoration: 'none' }}>
             <UniIcon>
               <img src={Logo} alt="logo" />
@@ -203,14 +202,12 @@ export default function Header() {
             ) : null}
           </MobileBalanceElement>
           <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggle()}>
-            {isDark ? <Sun size={24}/> : <Moon size={24}/>}
-          </StyledMenuButton>   
+            <StyledMenuButton onClick={() => toggle()}>
+              {isDark ? <Sun size={24} /> : <Moon size={24} />}
+            </StyledMenuButton>
           </HeaderElementWrap>
         </HeaderControls>
       </RowBetween>
     </HeaderFrame>
   )
 }
-
-

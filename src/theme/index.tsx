@@ -44,13 +44,13 @@ export function colors(darkMode: boolean): Colors {
     text2: darkMode ? '#ffffff' : '#848A8A', //secondary txt
     text3: darkMode ? '#ffffff' : '#919297', //pool tabs
     text4: darkMode ? '#ccc' : '#6C6D6F', //currency amount
-    text5: '#2C2F36',//?
+    text5: '#2C2F36', //?
     text6: darkMode ? '#ffffff' : '#ACD2FF', //main btn
     text7: darkMode ? '#153d6f70' : '#ffffff', //scnd button
 
     // backgrounds / greys
-    bg1: darkMode ? '#1e242b' : '#ffffff',//main card
-    bg2: darkMode ? '#153d6f70' : '#E3E3E3',//nav outline 
+    bg1: darkMode ? '#1e242b' : '#ffffff', //main card
+    bg2: darkMode ? '#153d6f70' : '#E3E3E3', //nav outline
     bg3: darkMode ? '#153d6f70' : '#EAEBF0', //nav btn bg
     bg4: darkMode ? '#153d6f70' : '#ffffff', //clicked navbar btn
     bg5: '#6C7284', //?
@@ -60,7 +60,7 @@ export function colors(darkMode: boolean): Colors {
     bg9: darkMode ? '#212429' : '#F5F6FA', //account selection
     bg10: '#041E2F', //flash icon - no longer used
     bg11: '#001A2A', //unused?
-    bg12: '#EAEBF0',//eth-binance bridge
+    bg12: '#EAEBF0', //eth-binance bridge
     //fuse -> gradient 'linear-gradient(137.27deg, #B1FFBF 3.65%, #FFF16D 100%)',
 
     //specialty colors
@@ -69,18 +69,18 @@ export function colors(darkMode: boolean): Colors {
 
     //primary colors
     primary1: darkMode ? '#F6F37C' : '#153d6f70',
-    primary2: '#3680E7',//?
-    primary3: '#4D8FEA',//?
-    primary4: '#376bad70',//?
-    primary5: '#153d6f70',//?
+    primary2: '#3680E7', //?
+    primary3: '#4D8FEA', //?
+    primary4: '#376bad70', //?
+    primary5: '#153d6f70', //?
 
     // color text
-    primaryText1: '#6da8ff',//?
+    primaryText1: '#6da8ff', //?
 
     // secondary colors
     secondary1: '#019BFF', // links
-    secondary2: '#17000b26',//?
-    secondary3: '#17000b26',//?
+    secondary2: '#17000b26', //?
+    secondary3: '#17000b26', //?
 
     // other
     red1: '#FF6871',

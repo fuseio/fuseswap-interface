@@ -1,5 +1,17 @@
 import React, { useRef } from 'react'
-import { Layers, Menu, Zap, Gift, TrendingUp, BookOpen, Code, PieChart, MessageCircle, BarChart2, MessageSquare } from 'react-feather'
+import {
+  Layers,
+  Menu,
+  Zap,
+  Gift,
+  TrendingUp,
+  BookOpen,
+  Code,
+  PieChart,
+  MessageCircle,
+  BarChart2,
+  MessageSquare
+} from 'react-feather'
 import styled from 'styled-components'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
 import useToggle from '../../hooks/useToggle'
@@ -56,7 +68,6 @@ const MenuFlyout = styled.span`
   top: 3rem;
   left: -5px;
   z-index: 100;
-
 `
 
 const MenuItem = styled(ExternalLink)`
@@ -72,11 +83,8 @@ const MenuItem = styled(ExternalLink)`
   }
   > svg {
     margin-right: 12px;
-    padding-top: 6px
-
-
+    padding-top: 6px;
   }
-
 `
 
 const MenuItemInternal = styled(StyledInternalLink)`
@@ -92,7 +100,7 @@ const MenuItemInternal = styled(StyledInternalLink)`
   }
   > svg {
     margin-right: 12px;
-    padding-top: 6px
+    padding-top: 6px;
   }
 `
 
@@ -108,20 +116,19 @@ export default function Sidebar() {
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
     <StyledMenu ref={node as any}>
       <StyledMenuButton onClick={toggle}>
-        <Menu  />
+        <Menu />
       </StyledMenuButton>
       {open && (
-       
         <MenuFlyout>
-        <MenuItemInternal to="bridge">
-        <Layers size={24} />
+          <MenuItemInternal to="bridge">
+            <Layers size={24} />
             Bridge
-        </MenuItemInternal>
+          </MenuItemInternal>
           <MenuItemInternal to="swap">
             <Zap size={24} />
             Swap
           </MenuItemInternal>
-           <MenuItem id="link" href="https://staking.fuse.io">
+          <MenuItem id="link" href="https://staking.fuse.io">
             <TrendingUp size={24} />
             Stake
           </MenuItem>
@@ -153,7 +160,6 @@ export default function Sidebar() {
             <MessageSquare size={24} />
             Telegram
           </MenuItem>
-         
         </MenuFlyout>
       )}
     </StyledMenu>
