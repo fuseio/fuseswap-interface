@@ -42,18 +42,20 @@ const StyledCloseIcon = styled(X)`
 `
 
 const StyledMenuButton = styled.button`
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  border-top-right-radius: 30px;
+  border-bottom-left-radius: 16px;
+  top: -40px;
+  left: 7px;
+  width: 55px;
+  height: 55px;
   border: none;
   background-color: transparent;
   margin: 0;
   padding: 0;
-  height: 35px;
   background-color: ${({ theme }) => theme.bg3};
 
   padding: 0.15rem 0.5rem;
-  border-radius: 0.5rem;
 
   :hover,
   :focus {
@@ -63,7 +65,8 @@ const StyledMenuButton = styled.button`
   }
 
   svg {
-    margin-top: 2px;
+    margin-top: 4px;
+    margin-right: 7px;
   }
 `
 const EmojiWrapper = styled.div`
@@ -90,14 +93,16 @@ const MenuFlyout = styled.span`
     0px 24px 32px rgba(0, 0, 0, 0.01);
 
   border: 1px solid ${({ theme }) => theme.bg3};
-
-  border-radius: 0.5rem;
+  min-width: 420px;
+  min-height: 23.125rem;
+  border-bottom-left-radius: 39px;
+  border-bottom-right-radius: 39px;
   display: flex;
   flex-direction: column;
   font-size: 1rem;
   position: absolute;
-  top: 3rem;
-  right: 0rem;
+  top: 1.75rem;
+  right: -3.855rem;
   z-index: 100;
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -218,13 +223,13 @@ export default function SettingsTab() {
                 toggle={
                   expertMode
                     ? () => {
-                        toggleExpertMode()
-                        setShowConfirmation(false)
-                      }
+                      toggleExpertMode()
+                      setShowConfirmation(false)
+                    }
                     : () => {
-                        toggle()
-                        setShowConfirmation(true)
-                      }
+                      toggle()
+                      setShowConfirmation(true)
+                    }
                 }
               />
             </RowBetween>

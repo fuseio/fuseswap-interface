@@ -2,7 +2,8 @@ import { ChainId } from '@fuseio/fuse-swap-sdk'
 import React from 'react'
 import { isMobile } from 'react-device-detect'
 import { Text } from 'rebass'
-import { ExternalLink as ExternalLinkIcon } from 'react-feather'
+import { useDarkModeManager } from '../../state/user/hooks'
+import { Moon, Sun } from 'react-feather'
 
 import styled from 'styled-components'
 
@@ -11,14 +12,12 @@ import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances } from '../../state/wallet/hooks'
 
 import { YellowCard } from '../Card'
-import Settings from '../Settings'
 import Menu from '../Menu'
 
 import { RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import { getNativeCurrencySymbol } from '../../utils'
-import { TYPE, ExternalLink } from '../../theme'
-import { BINANCE_MAINNET_CHAINID, BINANCE_TESTNET_CHAINID } from '../../constants'
+import { TYPE } from '../../theme'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -54,6 +53,7 @@ const Title = styled.a`
   display: flex;
   align-items: center;
   pointer-events: auto;
+  margin-left:1rem;
 
   :hover {
     cursor: pointer;
@@ -115,18 +115,6 @@ const BalanceText = styled(Text)`
   `};
 `
 
-const HeaderLink = styled(ExternalLink)`
-  display: flex;
-  align-items: center;
-  font-weight: 400;
-  color: white;
-  margin-right: 10px;
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `}
-`
-
 const MobileBalanceElement = styled.div`
   display: none;
   border-radius: 12px;
@@ -140,8 +128,29 @@ const MobileBalanceElement = styled.div`
 
 const MobileBalanceText = styled(Text)`
   padding: 0.5rem;
-  font-weight: 500;
+  font-weight: 500;  
 `
+const StyledMenuButton = styled.button`
+position: relative;
+width: 100%;
+height: 100%;
+border: none;
+background-color: transparent;
+margin: 0;
+padding: 0;
+height: 35px;
+background-color: ${({ theme }) => theme.bg3};
+margin-left: 8px;
+padding: 0.15rem 0.5rem;
+border-radius: 0.25rem;
+:hover,
+:focus {
+  cursor: pointer;
+  outline: none;
+  background-color: ${({ theme }) => theme.bg4};
+}
+`
+
 
 export const NETWORK_LABELS: any = {
   [ChainId.MAINNET]: 'Ethereum',
@@ -150,12 +159,11 @@ export const NETWORK_LABELS: any = {
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
   [ChainId.FUSE]: 'Fuse',
-  [BINANCE_TESTNET_CHAINID]: 'Binance Testnet',
-  [BINANCE_MAINNET_CHAINID]: 'Binance'
 }
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
+  const [isDark, toggle] = useDarkModeManager()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 
@@ -163,6 +171,7 @@ export default function Header() {
     <HeaderFrame>
       <RowBetween style={{ alignItems: 'flex-start' }} padding="1rem 1rem 0 1rem">
         <HeaderElement>
+        <Menu />
           <Title href="." style={{ textDecoration: 'none' }}>
             <UniIcon>
               <img src={Logo} alt="logo" />
@@ -174,12 +183,6 @@ export default function Header() {
         </HeaderElement>
         <HeaderControls>
           <HeaderElement>
-            <HeaderLink target="_blank" href="https://rewards.fuse.io">
-              Farming <ExternalLinkIcon style={{ marginLeft: 5 }} size={14} />
-            </HeaderLink>
-            <HeaderLink target="_blank" href="https://info.fuseswap.com" style={{ marginRight: 0 }}>
-              Analytics <ExternalLinkIcon style={{ marginLeft: 5 }} size={14} />
-            </HeaderLink>
             <TestnetWrapper>
               {!isMobile && chainId && NETWORK_LABELS[chainId] && <NetworkCard>{NETWORK_LABELS[chainId]}</NetworkCard>}
             </TestnetWrapper>
@@ -200,11 +203,14 @@ export default function Header() {
             ) : null}
           </MobileBalanceElement>
           <HeaderElementWrap>
-            <Settings />
-            <Menu />
+          <StyledMenuButton onClick={() => toggle()}>
+            {isDark ? <Sun size={24}/> : <Moon size={24}/>}
+          </StyledMenuButton>   
           </HeaderElementWrap>
         </HeaderControls>
       </RowBetween>
     </HeaderFrame>
   )
 }
+
+
