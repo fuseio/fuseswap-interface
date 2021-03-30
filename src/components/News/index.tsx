@@ -61,17 +61,22 @@ const NewsItem = styled.div`
   }
 }
 `
-let messages = ['The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network','The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network','The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network','The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network','The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network','The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network']
+const messages = [
+  'The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network',
+  'The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network',
+  'The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network',
+  'The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network',
+  'The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network',
+  'The current bridge fees withdrawal limit is 2000WFUSE, due to high gas fees on ETH network'
+]
 
 export default function News() {
-    return (
+  return (
     <Wrapper>
       <NewsWrapper>
-      {messages.map(message => (
-       <NewsItem>
-       {message}
-   </NewsItem>
-      ))}
+        {messages.map(message => (
+          <NewsItem key={message}>{message}</NewsItem>
+        ))}
       </NewsWrapper>
     </Wrapper>
   )

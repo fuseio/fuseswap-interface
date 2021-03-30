@@ -224,7 +224,7 @@ html {
 body {
   min-height: 100vh;
   opacity: 1;
-  background-color: ${({theme})=>theme.bg6};
+  background-color: ${({ theme }) => theme.bg6};
   background-size: 50px 50px;
   background-position: 0 0,25px 25px;
 }

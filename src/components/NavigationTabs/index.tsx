@@ -32,8 +32,8 @@ const StyledNavLink = styled(NavLink).attrs({
   text-decoration: none;
   color: ${({ theme }) => theme.text3};
   font-size: 20px;
-  margin:auto;
-  
+  margin: auto;
+
   &.${activeClassName} {
     border-radius: 12px;
     font-weight: 500;
@@ -65,13 +65,13 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' | 'bridge' })
   return (
     <Tabs style={{ marginBottom: '20px' }}>
       <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
-       <Zap /> {t('swap')}
+        <Zap /> {t('swap')}
       </StyledNavLink>
       <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
-       <Pocket /> {t('pool')}
+        <Pocket /> {t('pool')}
       </StyledNavLink>
       <StyledNavLink id={`bridge-nav-link`} to={'/bridge'} isActive={() => active === 'bridge'}>
-       <Layers />  Bridge
+        <Layers /> Bridge
       </StyledNavLink>
       <Settings />
     </Tabs>

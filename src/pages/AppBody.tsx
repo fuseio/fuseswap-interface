@@ -25,8 +25,10 @@ export const SwapWrapper = styled.div`
  * The styled container element that wraps the content of most pages and the tabs.
  */
 export default function AppBody({ children }: { children: React.ReactNode }) {
-  return <BodyWrapper>
-    <SwapWrapper>{children}</SwapWrapper>
-    <News />
+  return (
+    <BodyWrapper>
+      <SwapWrapper>{children}</SwapWrapper>
+      <News />
     </BodyWrapper>
+  )
 }
