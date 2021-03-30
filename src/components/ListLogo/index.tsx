@@ -6,6 +6,7 @@ import Logo from '../Logo'
 
 const StyledListLogo = styled(Logo)`
   width: 100px;
+  margin-left: 1rem;
 `
 
 export default function ListLogo({

@@ -2,7 +2,8 @@ import { ChainId } from '@fuseio/fuse-swap-sdk'
 import React from 'react'
 import { isMobile } from 'react-device-detect'
 import { Text } from 'rebass'
-import { ExternalLink as ExternalLinkIcon } from 'react-feather'
+import { Moon, Sun } from 'react-feather'
+import { useDarkModeManager } from '../../state/user/hooks'
 
 import styled from 'styled-components'
 
@@ -11,16 +12,17 @@ import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances } from '../../state/wallet/hooks'
 
 import { YellowCard } from '../Card'
-import Settings from '../Settings'
-import Menu from '../Menu'
 
 import { RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import { getNativeCurrencySymbol } from '../../utils'
-import { TYPE, ExternalLink } from '../../theme'
+import { TYPE } from '../../theme'
 import { BINANCE_MAINNET_CHAINID, BINANCE_TESTNET_CHAINID } from '../../constants'
+import Menu from '../Menu'
 
 const HeaderFrame = styled.div`
+  height: 90px;
+  background-color: ${({ theme }) => theme.bg1};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -29,6 +31,7 @@ const HeaderFrame = styled.div`
   top: 0;
   position: absolute;
   z-index: 3;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     padding: 12px 0 0 0;
     width: calc(100%);
@@ -62,6 +65,8 @@ const Title = styled.a`
 
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
+  height: 38px;
+  margin-right: 0.5rem;
   flex-direction: row;
   align-items: center;
   background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
@@ -112,19 +117,9 @@ const HeaderControls = styled.div`
 const BalanceText = styled(Text)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
+    margin:auto;
+    width:100%
   `};
-`
-
-const HeaderLink = styled(ExternalLink)`
-  display: flex;
-  align-items: center;
-  font-weight: 400;
-  color: white;
-  margin-right: 10px;
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `}
 `
 
 const MobileBalanceElement = styled.div`
@@ -142,7 +137,28 @@ const MobileBalanceText = styled(Text)`
   padding: 0.5rem;
   font-weight: 500;
 `
-
+const StyledMenuButton = styled.button`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  height: 35px;
+  background-color: ${({ theme }) => theme.bg3};
+  margin-left: 8px;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  color: ${({ theme }) => theme.text2};
+  :hover,
+  :focus {
+    cursor: pointer;
+    outline: none;
+    color: ${({ theme }) => theme.text1};
+    background-color: ${({ theme }) => theme.bg4};
+  }
+`
 export const NETWORK_LABELS: any = {
   [ChainId.MAINNET]: 'Ethereum',
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -156,13 +172,14 @@ export const NETWORK_LABELS: any = {
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
-
+  const [isDark, toggle] = useDarkModeManager()
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-
+  console.log(isDark)
   return (
     <HeaderFrame>
-      <RowBetween style={{ alignItems: 'flex-start' }} padding="1rem 1rem 0 1rem">
+      <RowBetween style={{ alignItems: 'flex-start' }} padding="1.5rem 1rem 0 1rem">
         <HeaderElement>
+          <Menu />
           <Title href="." style={{ textDecoration: 'none' }}>
             <UniIcon>
               <img src={Logo} alt="logo" />
@@ -174,12 +191,6 @@ export default function Header() {
         </HeaderElement>
         <HeaderControls>
           <HeaderElement>
-            <HeaderLink target="_blank" href="https://rewards.fuse.io">
-              Farming <ExternalLinkIcon style={{ marginLeft: 5 }} size={14} />
-            </HeaderLink>
-            <HeaderLink target="_blank" href="https://info.fuseswap.com" style={{ marginRight: 0 }}>
-              Analytics <ExternalLinkIcon style={{ marginLeft: 5 }} size={14} />
-            </HeaderLink>
             <TestnetWrapper>
               {!isMobile && chainId && NETWORK_LABELS[chainId] && <NetworkCard>{NETWORK_LABELS[chainId]}</NetworkCard>}
             </TestnetWrapper>
@@ -189,8 +200,8 @@ export default function Header() {
                   {userEthBalance?.toSignificant(4)} {getNativeCurrencySymbol(chainId)}
                 </BalanceText>
               ) : null}
-              <Web3Status />
             </AccountElement>
+            <Web3Status />
           </HeaderElement>
           <MobileBalanceElement>
             {account && userEthBalance ? (
@@ -200,8 +211,9 @@ export default function Header() {
             ) : null}
           </MobileBalanceElement>
           <HeaderElementWrap>
-            <Settings />
-            <Menu />
+            <StyledMenuButton onClick={() => toggle()}>
+              {isDark ? <Sun size={24} /> : <Moon size={24} />}
+            </StyledMenuButton>
           </HeaderElementWrap>
         </HeaderControls>
       </RowBetween>

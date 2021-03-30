@@ -3,10 +3,12 @@ import styled from 'styled-components'
 import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Link as HistoryLink } from 'react-router-dom'
+import { Zap, Layers, Pocket } from 'react-feather'
 
 import { ArrowLeft } from 'react-feather'
 import { RowBetween } from '../Row'
 import QuestionHelper from '../QuestionHelper'
+import Settings from '../Settings'
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -30,7 +32,8 @@ const StyledNavLink = styled(NavLink).attrs({
   text-decoration: none;
   color: ${({ theme }) => theme.text3};
   font-size: 20px;
-
+  margin:auto;
+  
   &.${activeClassName} {
     border-radius: 12px;
     font-weight: 500;
@@ -40,6 +43,11 @@ const StyledNavLink = styled(NavLink).attrs({
   :hover,
   :focus {
     color: ${({ theme }) => darken(0.1, theme.text1)};
+  }
+
+  > svg {
+    margin-right: 12px;
+    padding: 3px;
   }
 `
 
@@ -57,14 +65,15 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' | 'bridge' })
   return (
     <Tabs style={{ marginBottom: '20px' }}>
       <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
-        {t('swap')}
+       <Zap /> {t('swap')}
       </StyledNavLink>
       <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
-        {t('pool')}
+       <Pocket /> {t('pool')}
       </StyledNavLink>
       <StyledNavLink id={`bridge-nav-link`} to={'/bridge'} isActive={() => active === 'bridge'}>
-        Bridge
+       <Layers />  Bridge
       </StyledNavLink>
+      <Settings />
     </Tabs>
   )
 }

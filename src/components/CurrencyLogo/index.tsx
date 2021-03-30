@@ -22,6 +22,7 @@ const StyledEthereumLogo = styled.img<{ size: string }>`
 const StyledLogo = styled(Logo)<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
+  margin-left:1rem;
 `
 
 export default function CurrencyLogo({

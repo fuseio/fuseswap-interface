@@ -18,10 +18,9 @@ import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 import Swap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
-import { RightFlashIcon, LeftFlashIcon } from '../components/FlashIcon'
 import Bridge from './Bridge'
 import { RedirectToDefault } from './redirects'
-
+import Bubbles from '../components/Bubbles'
 const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
@@ -68,8 +67,8 @@ export default function App() {
             <Header />
           </HeaderWrapper>
           <Popups />
-          <LeftFlashIcon />
           <BodyWrapper>
+            <Bubbles/>
             <Web3ReactManager>
               <Switch>
                 <Route exact strict path="/swap" component={Swap} />
@@ -89,7 +88,6 @@ export default function App() {
             </Web3ReactManager>
             <Marginer />
           </BodyWrapper>
-          <RightFlashIcon />
         </AppWrapper>
       </HashRouter>
     </Suspense>
