@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import fuse from '../../assets/svg/fuse_sub.svg'
 
 const Circles = styled.div`
   position: absolute;
@@ -14,7 +15,6 @@ const Circles = styled.div`
     list-style: none;
     width: 20px;
     height: 20px;
-    background: #f5f278;
     animation: animate 25s linear infinite;
     bottom: -150px;
   }
@@ -98,23 +98,9 @@ const Circles = styled.div`
     0% {
       transform: translateY(0) rotate(0deg);
       opacity: 1;
-      border-radius: 0;
-    }
-    30% {
-      transform: translateY(-330px) rotate(240deg);
-      background-color: #e5f588;
-      border-radius: 10%;
-    }
-    50% {
-      transform: translateY(-500px) rotate(360deg);
-      background-color: #c6fbb3;
-      border-radius: 25%;
     }
     100% {
       transform: translateY(-1000px) rotate(720deg);
-      opacity: 0.25;
-      background-color: #77e183;
-      border-radius: 50%;
     }
   }
 `
@@ -122,16 +108,16 @@ const Circles = styled.div`
 export default function Bubbles() {
   return (
     <Circles>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
+
+<li><img src={fuse} alt="" width="100%"/></li>
+<li><img src={fuse} alt="" width="100%"/></li>
+<li><img src={fuse} alt="" width="100%"/></li>
+<li><img src={fuse} alt="" width="100%"/></li>
+<li><img src={fuse} alt="" width="100%"/></li>
+<li><img src={fuse} alt="" width="100%"/></li>
+<li><img src={fuse} alt="" width="100%"/></li>
+<li><img src={fuse} alt="" width="100%"/></li>
+
     </Circles>
   )
 }

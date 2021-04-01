@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import News from '../components/News'
+import NewsModal from '../components/News'
+import News from '../components/NewsModal'
 
 export const BodyWrapper = styled.div`
   position: relative;
@@ -10,13 +11,14 @@ export const BodyWrapper = styled.div`
 export const SwapWrapper = styled.div`
   position: relative;
   margin: auto;
+  margin-bottom: 2rem;
   max-width: 525px;
   min-height: 480px;
   width: 100%;
   background: ${({ theme }) => theme.bg1};
-  border: solid 2px #77e183;
-  box-shadow:-webkit-box-shadow: 5px 5px 0px 0px #77e183, 10px 10px 0px 0px #C6FBB3, 15px 15px 0px 0px #D3F99A, 20px 20px 0px 0px #E5F588, 25px 25px 0px 0px #F5F278, 5px 5px 10px 4px rgba(248,207,255,0); 
-  box-shadow: 5px 5px 0px 0px #77e183, 10px 10px 0px 0px #C6FBB3, 15px 15px 0px 0px #D3F99A, 20px 20px 0px 0px #E5F588, 25px 25px 0px 0px #F5F278, 5px 5px 10px 4px rgba(248,207,255,0);
+  border: solid 2px #000000;
+  box-shadow:-webkit-box-shadow: 5px 5px 0px 0px #000000, 10px 10px 0px 0px #000000, 15px 15px 0px 0px #000000, 20px 20px 0px 0px #000000, 25px 25px 0px 0px #000000, 5px 5px 10px 4px rgba(248,207,255,0); 
+  box-shadow: 5px 5px 0px 0px #000000, 8px 14px 0px 0px #000000, 16px 15px 0px 0px #000000, 5px 5px 10px 4px rgb(248 207 255 / 0%);
   border-radius: 30px;
   padding: 1rem;
 `
@@ -29,6 +31,7 @@ export default function AppBody({ children }: { children: React.ReactNode }) {
     <BodyWrapper>
       <SwapWrapper>{children}</SwapWrapper>
       <News />
+      <NewsModal></NewsModal>
     </BodyWrapper>
   )
 }

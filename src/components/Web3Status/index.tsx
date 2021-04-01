@@ -60,13 +60,13 @@ const Web3StatusError = styled(Web3StatusGeneric)`
 
 const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
   background-color: ${({ theme }) => theme.primary4};
-  border: none;
+  border: 1px solid ${({ theme }) => theme.primary5};
   color: ${({ theme }) => theme.primaryText1};
   font-weight: 500;
+  min-width: 175px;
 
   :hover,
   :focus {
-    border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
     color: ${({ theme }) => theme.primaryText1};
   }
 

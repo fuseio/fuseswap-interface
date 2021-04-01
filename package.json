@@ -80,7 +80,6 @@
     "rebass": "^4.0.7",
     "redux-localstorage-simple": "^2.3.1",
     "serve": "^11.3.0",
-    "start-server-and-test": "^1.11.0",
     "styled-components": "^4.2.0",
     "typescript": "^3.8.3",
     "use-async-memo": "^1.2.2"
@@ -95,7 +94,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "lint": "eslint --ext js,jsx,ts,tsx src/",
-    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
+    "integration-test": "start-server-and-test 'build -l 3000' 'cypress run'",
     "build:qa": "env-cmd -f .env react-scripts build",
     "build:beta": "env-cmd -f .env.beta react-scripts build"
   },
@@ -114,5 +113,8 @@
       "last 1 safari version"
     ]
   },
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "start-server-and-test": "^1.12.1"
+  }
 }

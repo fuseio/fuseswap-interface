@@ -9,6 +9,8 @@ import { useBridgeFee, useCalculatedBridgeFee } from '../../state/bridge/hooks'
 import { useCurrency } from '../../hooks/Tokens'
 
 const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
+background-color:red;
+  display: ${({ show }) => (show ? 'none !important' : 'none !important')};
   padding-top: calc(16px + 2rem);
   padding-bottom: 20px;
   margin-top: -2rem;
@@ -19,8 +21,7 @@ const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
   color: ${({ theme }) => theme.text2};
   background-color: ${({ theme }) => theme.advancedBG};
   z-index: -1;
-
-  transform: ${({ show }) => (show ? 'translateY(0%)' : 'translateY(-100%);display:none;')};
+  transform: ${({ show }) => (show ? 'translateY(0%)' : 'translateY(-100%);')};
   transition: transform 300ms ease-in-out;
 `
 

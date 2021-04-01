@@ -166,7 +166,7 @@ export default function CurrencyInputPanel({
         {!hideInput && (
           <LabelRow>
             <RowBetween>
-              <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+              <TYPE.body color={theme.red1} fontWeight={500} fontSize={14}>
                 {label}
               </TYPE.body>
               {account && (

@@ -534,8 +534,8 @@ export default function Swap() {
             {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
             {betterTradeLinkVersion && <BetterTradeLink version={betterTradeLinkVersion} />}
           </BottomGrouping>
-          <AdvancedSwapDetailsDropdown trade={trade} />
         </Wrapper>
+        <AdvancedSwapDetailsDropdown trade={trade} />
       </AppBody>
     </>
   )

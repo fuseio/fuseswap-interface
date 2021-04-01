@@ -16,7 +16,6 @@ import { YellowCard } from '../Card'
 import { RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import { getNativeCurrencySymbol } from '../../utils'
-import { TYPE } from '../../theme'
 import { BINANCE_MAINNET_CHAINID, BINANCE_TESTNET_CHAINID } from '../../constants'
 import Menu from '../Menu'
 
@@ -29,7 +28,7 @@ const HeaderFrame = styled.div`
   flex-direction: column;
   width: 100%;
   top: 0;
-  position: absolute;
+  position: fixed;
   z-index: 3;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -184,9 +183,6 @@ export default function Header() {
             <UniIcon>
               <img src={Logo} alt="logo" />
             </UniIcon>
-            <TYPE.body fontSize={12} fontWeight={700} marginLeft={2}>
-              BETA
-            </TYPE.body>
           </Title>
         </HeaderElement>
         <HeaderControls>

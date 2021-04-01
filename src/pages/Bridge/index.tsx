@@ -326,8 +326,8 @@ export default function Bridge() {
             )}
           </BottomGrouping>
         </Wrapper>
+        <BridgeDetails inputCurrencyId={inputCurrencyId} inputAmount={parsedAmounts[Field.INPUT]} />
       </AppBody>
-      <BridgeDetails inputCurrencyId={inputCurrencyId} inputAmount={parsedAmounts[Field.INPUT]} />
     </>
   )
 }
