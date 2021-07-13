@@ -116,5 +116,15 @@
       "last 1 safari version"
     ]
   },
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "@apollo/client": "^3.3.21",
+    "@types/webfontloader": "^1.6.33",
+    "bignumber.js": "^9.0.1",
+    "dayjs": "^1.10.6",
+    "graphql": "^15.5.1",
+    "react-content-loader": "^6.0.3",
+    "react-promise-tracker": "^2.1.0",
+    "webfontloader": "^1.6.28"
+  }
 }
