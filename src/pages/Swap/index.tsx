@@ -53,6 +53,7 @@ import { isTokenOnTokenList } from '../../utils'
 import Maintenance from '../../components/swap/Maintenance'
 import { useAddPopup } from '../../state/application/hooks'
 import styled from 'styled-components'
+import MainCard from '../../components/MainCard'
 
 const ExpandableWrapper = styled("div")`
   overflow: hidden;
@@ -202,6 +203,7 @@ export default function Swap() {
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
   const addPopup = useAddPopup();
+ // const addPopup = useAddPopup();
 
   // mark when a user has submitted an approval, reset onTokenSelection for input field
   useEffect(() => {
@@ -209,12 +211,13 @@ export default function Swap() {
       Object.keys(tokens).forEach((key)=>{
         const wrappedToken = tokens[key] as WrappedTokenInfo
         if (wrappedToken.isDeprecated) {
+          console.log(wrappedToken)
           addPopup({deprecated: {
             token: wrappedToken.tokenInfo.symbol,
             currency: wrappedToken,
           }})
           return
-        }      
+        }
       })
     }
 
@@ -351,10 +354,11 @@ export default function Swap() {
     return (
       <>
         <AppBody>
-          <Wrapper>
             <SwapPoolTabs active={'swap'} />
+            <MainCard>
             {completedBridgeTransfer ? <SwitchNetwork /> : <BridgeInfo />}
-          </Wrapper>
+
+              </MainCard>
         </AppBody>
       </>
     )
@@ -367,9 +371,11 @@ export default function Swap() {
         tokens={urlLoadedTokens}
         onConfirm={handleConfirmTokenWarning}
       />
+
       <AppBody>
         <SwapPoolTabs active={'swap'} />
-        <Wrapper id="swap-page">
+        <MainCard >
+        <Wrapper id="swap-page" >
           <ConfirmSwapModal
             isOpen={showConfirm}
             trade={trade}
@@ -566,12 +572,15 @@ export default function Swap() {
             {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
             {betterTradeLinkVersion && <BetterTradeLink version={betterTradeLinkVersion} />}
           </BottomGrouping>
-        </Wrapper>
+          </Wrapper>
           <ExpandableWrapper>
             <Content size={trade ? '0' : '-375'}>
               <AdvancedSwapDetailsDropdown trade={trade} />
             </Content>
           </ExpandableWrapper>
+        </MainCard>
+
+
       </AppBody>
     </>
   )

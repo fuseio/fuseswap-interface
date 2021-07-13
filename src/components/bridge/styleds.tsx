@@ -37,6 +37,9 @@ export const DestinationWrapper = styled.div`
   flex-wrap: wrap;
   align-items: center;
   margin-bottom: 2rem;
+  color: #B5B9D3;
+  font-size: 14px;
+  font-weight: 500;
 `
 
 export const ModalLink = styled(Link)`

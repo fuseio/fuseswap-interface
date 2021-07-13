@@ -19,10 +19,11 @@ import { useActiveWeb3React, useChain } from '../../hooks'
 import { usePairs } from '../../data/Reserves'
 import { toV2LiquidityToken, useTrackedTokenPairs } from '../../state/user/hooks'
 import AppBody from '../AppBody'
-import { Dots, Wrapper } from '../../components/swap/styleds'
+import { Dots } from '../../components/swap/styleds'
 import SwitchNetwork from '../../components/swap/SwitchNetwork'
 import { UNDER_MAINTENANCE } from '../../constants'
 import Maintenance from '../../components/swap/Maintenance'
+import MainCard from '../../components/MainCard'
 
 export default function Pool() {
   const theme = useContext(ThemeContext)
@@ -69,10 +70,12 @@ export default function Pool() {
     return (
       <>
         <AppBody>
-          <Wrapper>
             <SwapPoolTabs active={'pool'} />
+            <MainCard>
+
             <SwitchNetwork />
-          </Wrapper>
+            </MainCard>
+
         </AppBody>
       </>
     )
@@ -82,6 +85,7 @@ export default function Pool() {
     <>
       <AppBody>
         <SwapPoolTabs active={'pool'} />
+        <MainCard>
         <AutoColumn gap="lg" justify="center">
           <ButtonPrimary id="join-pool-button" as={Link} style={{ padding: 16 }} to="/add/FUSE">
             <Text fontWeight={500} fontSize={20}>
@@ -143,6 +147,7 @@ export default function Pool() {
             </div>
           </AutoColumn>
         </AutoColumn>
+        </MainCard>
       </AppBody>
     </>
   )

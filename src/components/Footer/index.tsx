@@ -1,92 +1,77 @@
 import React from 'react'
 import styled from 'styled-components'
-import fuse from '../../assets/svg/fuse.svg'
-import axios from "axios";
+import telegram from '../../assets/svg/telegram.svg'
+import discord from '../../assets/svg/discord.svg'
+import twitter from '../../assets/svg/twitter.svg'
+import medium from '../../assets/svg/medium.svg'
+import github from '../../assets/svg/github.svg'
+
+import { ExternalLink } from '../../theme'
 
 const Container = styled.div`
-  display: flex;
-  flex: flex-wrap;
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
   overflow: hidden;
-  height: 2.25rem;
-  background-color: black;
+  height: 6vh;
+  background-color: #232638;
   z-index: 100;
 }
 `
 
-const NewsWrapper = styled.div`
-  width: 100%;
-  padding-left: 100%; /* Push contents to right side of screen */
-}
-`
-const NewsMover = styled.div`
-  @keyframes ticker {
-    0% { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(-100%, 0, 0); }
-  }
-  display: inline-block;
-  white-space: nowrap;
-  padding-right: 100%;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  animation-name: ticker;
-  animation-duration: 20s;
-  }
-  :hover{
-  animation-play-state: paused;
-  }
-`
-const News = styled.div`
-  display: inline-block;
-  width: 33%;
-  padding: 0 2rem;
-  line-height: 2rem;
+const SocialBar = styled.div`
+  display: flex;
+  width: 98%;
+  height: 100%;
   color: white;
+  text-align: right;
+  justify-content: flex-end;
+  align-items: center;
   > img {
-    padding-top: 0.5rem;
-    margin-right: 0.5rem;
+    margin-left: 0.75rem;
+    padding-top: 0.75rem;
+    margin-right: 1.25rem;
   }
-
 `
 
+const Item = styled(ExternalLink)`
+  font-size: 1.25vw;
+  color: ${({ theme }) => theme.text2};
+  margin-right: 14px;
+  :hover {
+    color: ${({ theme }) => theme.text1};
+    cursor: pointer;
+    text-decoration: none;
+  }
+  > svg {
+    margin-left: 18px;
+    margin-right: 18px;
+    padding-top: 9px;
+  }
+`
 
 export default function Footer() {
-  let [responseData, setResponseData] = React.useState('');
-  const fetchData = React.useCallback(() => {
-    axios({
-      "method": "GET",
-      "url": "https://service.fuseswap.com/api/v1/price/0x0be9e53fd7edac9f859882afdda116645287c629",
-    })
-    .then((response) => {
-      setResponseData(response.data.data.price)
-      console.log(response.data.price);
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }, [])
 
-  React.useEffect(() => {
-    fetchData()
-  }, [fetchData])
-    
-
-  const size = [0, 0, 0, 0, 0, 0 ];
   return (
     <Container>
-      <NewsWrapper>
-        <NewsMover>
-          {size.map((size, index) => (
-            <News>
-            <img src={fuse} height="24px" />
-            {responseData && <span>Fuse Token Price: {parseFloat(responseData).toFixed(2)} USD</span>}
-            </News>
-          ))};
-        </NewsMover>
-      </NewsWrapper>
+      <SocialBar>
+        <Item id="link" href="https://medium.com/fusenet">
+          <img src={medium} />
+        </Item>
+        <Item id="link" href="https://github.com/fuseio">
+          <img src={github} />
+        </Item>
+        <Item id="link" href="https://twitter.com/fuse_network">
+          <img src={telegram} />
+        </Item>
+        <Item id="link" href="https://discord.com/invite/jpPMeSZ">
+          <img src={discord} />
+        </Item>
+        <Item id="link" href="https://t.me/fuseswap">
+          <img src={twitter} />
+        </Item>
+      </SocialBar>
     </Container>
   )
 };

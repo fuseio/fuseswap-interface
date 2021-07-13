@@ -8,6 +8,23 @@ import { ArrowLeft } from 'react-feather'
 import { RowBetween } from '../Row'
 import QuestionHelper from '../QuestionHelper'
 
+export const Wrapper = styled("div")`
+  position: relative;
+  margin-bottom: 25px;
+  padding: 0.25rem;
+  width: 100%;
+  margin-left: 30%;
+  margin-right: 30%;
+  background: ${({ theme }) => theme.bg1};
+  border: solid 2px #000000;
+  border-radius: 16px;
+  -webkit-box-shadow: 9px 9px 0px 0px #000000, 8px 11px 0px 0px #000000; 
+  box-shadow: 9px 9px 0px 0px #000000, 8px 11px 0px 0px #000000;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+      margin-left: 0;
+  margin-right: 0;
+  `}
+`
 
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -31,11 +48,27 @@ const StyledNavLink = styled(NavLink).attrs({
   text-decoration: none;
   color: ${({ theme }) => theme.text3};
   font-size: 20px;
+  width: 100%;
 
   &.${activeClassName} {
     border-radius: 12px;
     font-weight: 500;
     color: ${({ theme }) => theme.text1};
+    :before{
+      content:"";
+  position:absolute;
+  width: 33.3%;
+  top:0;
+  bottom:0;
+  border-radius:16px; 
+  padding:2px; 
+  background:linear-gradient(110deg, #b1ffbf 7%, #fff16d);
+  -webkit-mask: 
+     linear-gradient(#fff 0 0) content-box, 
+     linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out; 
+  mask-composite: exclude; 
+    }
   }
 
   :hover,
@@ -56,7 +89,8 @@ const StyledArrowLeft = styled(ArrowLeft)`
 export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' | 'bridge' }) {
   const { t } = useTranslation()
   return (
-    <Tabs style={{ marginBottom: '20px' }}>
+    <Wrapper>
+       <Tabs>
       <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
         {t('swap')}
       </StyledNavLink>
@@ -67,6 +101,7 @@ export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' | 'bridge' })
         Bridge
       </StyledNavLink>
     </Tabs>
+   </Wrapper>
   )
 }
 

@@ -1,132 +1,93 @@
 import React from 'react'
-import {useState} from "react";
 import styled from 'styled-components'
-import fuse from '../../assets/svg/fuse_sub.svg'
-import { ChevronUp } from 'react-feather'
-import Card from '../MainCard'
-import {articles} from './articles.js'
+import useScript from '../../hooks/useScript'
+import Loader from './loader'
+
+export const Container = styled.div`
+z-index:100;
+border-radius: 12px;
+background: #202231;
+height: 100%;
+position: relative;
+  > a {
+    text-decoration: none;
+    color: #ffffff;
+    padding-bottom: 0px;
+  }
+`
 
 export const Header = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  margin: auto;
+  font-family: 'Inter';
+  padding-left: 25px;
+  padding-top: 20px;
+  font-size: 32px;
+  text-align: left;
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: normal;
   width: 100%;
-  line-height: 0rem;
-  padding-bottom: 0.75rem;
+  padding-bottom: 8px;
 `
-export const HeaderItem = styled.div`
+export const Item = styled.div`
+  padding: 10px 30px;
   display: flex;
   flex: 1 1 90%;
   flex-wrap: wrap;
-  font-size: 1.25rem;
-  line-height: 2.5rem;
+  font-size: 18px;
+  line-height: 39px;
   font-weight: 500;
+  text-align: left;
   > img{
     margin-right: 1rem;
   }
-`
-const HeaderOptions = styled("div")<{ size: string, y: string }>`
-  display: flex;
-  flex: 1 1 10%;
-  flex-wrap: wrap;
-  transform: rotateX(${({ size }) => size}deg) translateX(10px) translateY(${({ y }) => y}px);
-  transition: all 1s;
-`
-
-const ExpandableWrapper = styled.div`
-  overflow: hidden;
-`
-
-const Content = styled("div")<{ size: string }>`
-  margin-top: ${({ size }) => size}%;
-  transition: all 0.4s;
-`
-
-const Article = styled("div")`
-  padding-bottom: 1.45rem;
-`
-
-const Title = styled("a")`
-  display: inline-block;
-  position: relative;
-  width:100%;
-  overflow: hidden;
-  color: ${({ theme }) => theme.text1};
-  vertical-align: bottom;
-  text-decoration: none;
-  text-align:center;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-  border-radius: 16px;
-  line-height: 2rem;
-  z-index: 0;
-  transition: color .3s ease-out;
-
-  ::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    transform: translateY(calc(100% - 2px));
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(50deg, #F5F378 0%, #9FFCB4 100%);
-    transition: transform .35s ease-out;
+  >b{
+    color:#003cff;
   }
-  ::after {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(50deg, #F5F378 0%, #9FFCB4 100%);
-    transform: translateY(calc(-100% + 2px));
-    transition: transform .35s ease-out;
+  >p{
+    margin: 0rem;
   }
-  
-  :hover { 
-    color: #000000; 
-    font-weight: 600;
+  > p >span{
+    text-align: center;
   }
 
-  :hover::before {
-    transform: translateY(0);
-    transition: transform .25s ease-out;
-  }
-  :hover::after {
-    transform: translateY(0);
-    transition: transform .25s ease-out;
-  }
+`
+
+export const Wrap = styled.div`
+width: 100%;
+height: 100%;
+position: relative;
+`
+
+export const Twitter = styled.div`
+padding-bottom: 0px;
+display: block;
+position: absolute;
+height: 77%;
+top:0;
+overflow: hidden;
+width: 99%;
 `
 
 export default function NewsModal() {
-  const [open,setOpen] = useState(true);
-  const toggle = () => {setOpen(!open)}
+  useScript('https://platform.twitter.com/widgets.js');
 
   return (
-    <Card>
-      <Header onClick={toggle}>
-       <HeaderItem>
-          <img src={fuse} alt="test" width="32px"></img> 
-          News
-       </HeaderItem>
-        <HeaderOptions size={open? '-170' : '0'} y={open? '10' : '0'}>
-        <ChevronUp />
-        </HeaderOptions>
+    <Container>
+      <Header>
+        News
       </Header>
 
-      <ExpandableWrapper>
-        <Content size={open ? '0' : '-220'}>
-          {articles.map((article, index) => (
-            <Article>
-              <Title target="_blank" href={article.link}> -  {article.title}</Title>
-            </Article>
-          ))}
-        </Content>
-      </ExpandableWrapper>
-    </Card>
+     <Wrap>
+     <Twitter>
+      <a className="twitter-timeline" data-chrome="transparent nofooter noborders noheader noscrollbar"  data-height="325"
+ data-theme="dark" href="https://twitter.com/Fuse_network?ref_src=twsrc%5Etfw">
+   <Loader />
+   </a> </Twitter>  
+ 
+     </Wrap>
+  </Container>
   );
+
 }
+

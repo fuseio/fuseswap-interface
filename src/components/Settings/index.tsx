@@ -6,7 +6,6 @@ import {
   useUserSlippageTolerance,
   useExpertModeManager,
   useUserDeadline,
-  useDarkModeManager
 } from '../../state/user/hooks'
 import TransactionSettings from '../TransactionSettings'
 import { RowFixed, RowBetween } from '../Row'
@@ -19,20 +18,17 @@ import { ButtonError } from '../Button'
 import { useSettingsMenuOpen, useToggleSettingsMenu } from '../../state/application/hooks'
 import { Text } from 'rebass'
 import Modal from '../Modal'
+import { darken } from 'polished'
 
 const StyledMenuIcon = styled(Settings)`
-  height: 20px;
-  width: 20px;
-
+  height: 100%;
+  width: 18%;
+  padding: 10px;
+  padding-right: 0px;
+  padding-left: 0px;
   > * {
-    stroke: grey;
-    :hover,
-    :focus {
-      cursor: pointer;
-      outline: none;
-      stroke: ${({ theme }) => theme.text1};
-      background-color: ${({ theme }) => theme.bg4};
-    }
+    stroke: #B5B9D3;
+    
   }  
 `
 
@@ -49,20 +45,26 @@ const StyledCloseIcon = styled(X)`
 `
 
 const StyledMenuButton = styled.button`
-  position: relative;
+  display: flex;
+  flex-wrap; wrap;
+  justify-content: left;
   width: 100%;
-  height: 100%;
+  height: 48px;
   border: none;
+  border-top: 1px solid #111219;
+  border-bottom: 1px solid #111219;
   background-color: transparent;
   margin: 0;
   padding: 0;
-  height: 35px;
-  background-color: ${({ theme }) => theme.bg3};
-
   padding: 0.15rem 0.5rem;
-  border-radius: 0.5rem;
+  >span{
+    line-height: 42px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #B5B9D3;
+  }
   svg path{
-    stroke: grey;
+    stroke: #B5B9D3;
     stroke-width: 1.5px;
     margin-top: 2px;
   }
@@ -70,11 +72,8 @@ const StyledMenuButton = styled.button`
   :focus {
     cursor: pointer;
     outline: none;
-    background-color: ${({ theme }) => theme.bg4};
-    svg path{
-      stroke: black;
-      stroke-width: 2px;
-    }
+    background-color: ${({ theme }) => darken(0.05, theme.bg7)};
+    
   }
 
 
@@ -83,36 +82,35 @@ const EmojiWrapper = styled.div`
   position: absolute;
   bottom: -6px;
   right: 0px;
-  font-size: 14px;
+  font-size: 12px;
 `
 
 const StyledMenu = styled.div`
-  margin-left: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+  height: 100%;
+  width: 100%;
+  height: 48px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
   border: none;
   text-align: left;
 `
 
 const MenuFlyout = styled.span`
-  min-width: 20.125rem;
-  background-color: ${({ theme }) => theme.bg1};
+  min-width: 100%;
+  background-color: ${({ theme }) => theme.bg7};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
-
-  border: 1px solid ${({ theme }) => theme.bg3};
-
-  border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
-  font-size: 1rem;
+  font-size: 0.5rem;
   position: absolute;
-  top: 5rem;
+  bottom: 48px;
   right: 0rem;
   z-index: 100;
-
+  box-shadow: -2px -4px 10px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: -2px -4px 10px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: -2px -4px 10px 0px rgba(0,0,0,0.75);
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     min-width: 18.125rem;
     right: -46px;
@@ -146,8 +144,6 @@ export default function SettingsTab() {
 
   const [expertMode, toggleExpertMode] = useExpertModeManager()
 
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
-
   // show confirmation view before turning on
   const [showConfirmation, setShowConfirmation] = useState(false)
 
@@ -158,8 +154,8 @@ export default function SettingsTab() {
     <StyledMenu ref={node as any}>
       <Modal isOpen={showConfirmation} onDismiss={() => setShowConfirmation(false)} maxHeight={100}>
         <ModalContentWrapper>
-          <AutoColumn gap="lg">
-            <RowBetween style={{ padding: '0 2rem' }}>
+          <AutoColumn gap="sm">
+            <RowBetween>
               <div />
               <Text fontWeight={500} fontSize={20}>
                 Are you sure?
@@ -167,7 +163,7 @@ export default function SettingsTab() {
               <StyledCloseIcon onClick={() => setShowConfirmation(false)} />
             </RowBetween>
             <Break />
-            <AutoColumn gap="lg" style={{ padding: '0 2rem' }}>
+            <AutoColumn gap="sm">
               <Text fontWeight={500} fontSize={20}>
                 Expert mode turns off the confirm transaction prompt and allows high slippage trades that often result
                 in bad rates and lost funds.
@@ -194,7 +190,7 @@ export default function SettingsTab() {
         </ModalContentWrapper>
       </Modal>
       <StyledMenuButton onClick={toggle} id="open-settings-dialog-button">
-        <StyledMenuIcon />
+        <StyledMenuIcon /> <span> Settings </span>
         {expertMode && (
           <EmojiWrapper>
             <span role="img" aria-label="wizard-icon">
@@ -205,19 +201,14 @@ export default function SettingsTab() {
       </StyledMenuButton>
       {open && (
         <MenuFlyout>
-          <AutoColumn gap="md" style={{ padding: '1rem' }}>
-            <Text fontWeight={600} fontSize={14}>
-              Transaction Settings
-            </Text>
+          <AutoColumn>
             <TransactionSettings
               rawSlippage={userSlippageTolerance}
               setRawSlippage={setUserslippageTolerance}
               deadline={deadline}
               setDeadline={setDeadline}
             />
-            <Text fontWeight={600} fontSize={14}>
-              Interface Settings
-            </Text>
+
             <RowBetween>
               <RowFixed>
                 <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
@@ -240,14 +231,6 @@ export default function SettingsTab() {
                       }
                 }
               />
-            </RowBetween>
-            <RowBetween>
-              <RowFixed>
-                <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
-                  Toggle Dark Mode
-                </TYPE.black>
-              </RowFixed>
-              <Toggle isActive={darkMode} toggle={toggleDarkMode} />
             </RowBetween>
           </AutoColumn>
         </MenuFlyout>

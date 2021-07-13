@@ -1,13 +1,28 @@
 import React from 'react'
 import styled from 'styled-components'
-import Card from '../components/MainCard'
-import News from '../components/News'
 import Footer from '../components/Footer'
-import Menu from '../components/Menu'
+import Header from '../components/Header'
 
 export const BodyWrapper = styled.div`
-  position: relative;
+  margin: 0;
+  min-height: 100%;
   width: 100%;
+  display: flex; /* body is the outer flex container */
+  flex-flow: row wrap;
+  text-align: center;
+  @media only screen and (max-width: 1440px) {
+    margin-top: 1.75%;
+  }
+  @media only screen and (min-width: 1442px) {
+    margin-top: 2.75%;
+  }
+`
+
+export const MobileNav = styled.div`
+  display: block;
+  @media (max-width: 1600) {
+    display: none;
+  }
 `
 
 /**
@@ -15,11 +30,14 @@ export const BodyWrapper = styled.div`
  */
 export default function AppBody({ children }: { children: React.ReactNode }) {
   return (
-  <BodyWrapper>
-    <Menu></Menu>
-    <Card>{children}</Card>
-    <News/>
-    <Footer/>
-  </BodyWrapper>
+    <div>
+      <Header></Header>
+
+      <BodyWrapper>
+        <MobileNav></MobileNav>
+        {children}
+      </BodyWrapper>
+      <Footer />
+    </div>
   )
 }

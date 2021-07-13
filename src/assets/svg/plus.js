@@ -2,7 +2,7 @@ import React from 'react';
 
 function Plus(props) {
     return (
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" >
+<svg width="14px" height="14px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" >
     <title>Group 5</title>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="icon2" transform="translate(-56.000000, -470.000000)" fill="#393939" fill-rule="nonzero">
