@@ -1,5 +1,5 @@
 import Staking from '../constants/abis/stakeMethods.json'
-import ethers from "ethers";
+import ethers from 'ethers/lib';
 import { formatEther, parseUnits } from 'ethers/lib/utils'
 import { getProviderOrSigner } from '../utils';
 import BasicTokenABI from '../constants/abis/tokenABI.json'
