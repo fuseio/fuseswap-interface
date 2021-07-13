@@ -17,15 +17,12 @@ import { useWalletModalToggle } from '../../state/application/hooks'
 import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
-import { ButtonSecondary } from '../Button'
 
 import Identicon from '../Identicon'
 import Loader from '../Loader'
 
 import { RowBetween } from '../Row'
 import WalletModal from '../WalletModal'
-import useAddChain from '../../hooks/useAddChain'
-import { FUSE_CHAIN } from '../../constants/chains'
 
 const IconWrapper = styled.div<{ size?: number }>`
   ${({ theme }) => theme.flexColumnNoWrap};
@@ -37,12 +34,13 @@ const IconWrapper = styled.div<{ size?: number }>`
   }
 `
 
-const Web3StatusGeneric = styled(ButtonSecondary)`
+const Web3StatusGeneric = styled('div')`
   ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   align-items: center;
-  padding: 0.5rem;
   border-radius: 12px;
+  padding: 0.5rem;
+  border-color: ${({ theme }) => theme.bg3};
   cursor: pointer;
   user-select: none;
   :focus {
@@ -61,40 +59,40 @@ const Web3StatusError = styled(Web3StatusGeneric)`
 `
 
 const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
-  background-color: ${({ theme }) => theme.primary4};
-  border: none;
-  color: ${({ theme }) => theme.primaryText1};
+  color: ${({ theme }) => theme.text1};
   font-weight: 500;
-
+  border: 2px solid ${({ theme }) => theme.bg3};
   :hover,
   :focus {
-    border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-    color: ${({ theme }) => theme.primaryText1};
+    border: 2px solid ${({ theme }) => darken(0.05, theme.text1)};
+    color: ${({ theme }) => theme.text1};
   }
 
   ${({ faded }) =>
     faded &&
     css`
-      background-color: ${({ theme }) => theme.primary5};
-      border: 1px solid ${({ theme }) => theme.primary5};
-      color: ${({ theme }) => theme.primaryText1};
+      background-color: ${({ theme }) => theme.bg3};
+      border: 2px solid ${({ theme }) => darken(0.05, theme.text1)};
+      color: ${({ theme }) => theme.text1};
 
       :hover,
       :focus {
-        border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-        color: ${({ theme }) => darken(0.05, theme.primaryText1)};
+        color: ${({ theme }) => theme.text1};
       }
     `}
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
   background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg2)};
-  border: 1px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg3)};
-  color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
-  font-weight: 500;
+  border: 2px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg3)};
+  border-radius: 0;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  color: ${({ pending, theme }) => (pending ? theme.black : theme.text1)};
+  font-weight: 400;
   :hover,
   :focus {
-    background-color: ${({ pending, theme }) => (pending ? darken(0.05, theme.primary1) : lighten(0.05, theme.bg2))};
+    background-color: ${({ pending, theme }) => (pending ? darken(0.05, theme.primary1) : lighten(0.25, theme.bg2))};
 
     :focus {
       border: 1px solid ${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : darken(0.1, theme.bg3))};
@@ -166,7 +164,6 @@ function StatusIcon({ connector }: { connector: AbstractConnector }) {
 function Web3StatusInner() {
   const { t } = useTranslation()
   const { account, connector, error } = useWeb3React()
-  const { addChain, isAddChainEnabled } = useAddChain()
 
   const { ENSName } = useENSName(account ?? undefined)
 
@@ -188,7 +185,7 @@ function Web3StatusInner() {
       <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
         {hasPendingTransactions ? (
           <RowBetween>
-            <Text>{pending?.length} Pending</Text> <Loader stroke="white" />
+            <Text>{pending?.length} Pending</Text> <Loader stroke="black" />
           </RowBetween>
         ) : (
           <>
@@ -200,28 +197,16 @@ function Web3StatusInner() {
       </Web3StatusConnected>
     )
   } else if (error) {
-    return error instanceof UnsupportedChainIdError && isAddChainEnabled ? (
-      <Web3StatusConnect onClick={() => addChain(FUSE_CHAIN)}>
-        <Text>Switch to Fuse</Text>
-      </Web3StatusConnect>
-    ) : (
+    return (
       <Web3StatusError onClick={toggleWalletModal}>
         <NetworkIcon />
-        <Text>Error</Text>
+        <Text>{error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error'}</Text>
       </Web3StatusError>
     )
   } else {
-    if (isAddChainEnabled) {
-      return (
-        <Web3StatusConnect onClick={() => addChain(FUSE_CHAIN)}>
-          <Text>Switch to Fuse</Text>
-        </Web3StatusConnect>
-      )
-    }
-
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
-        <Text>{t('Connect to a wallet')}</Text>
+        <Text>{t('Connect wallet')}</Text>
       </Web3StatusConnect>
     )
   }

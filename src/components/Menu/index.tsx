@@ -1,129 +1,256 @@
 import React, { useRef } from 'react'
-import { Info, BookOpen, Code, PieChart, MessageCircle, BarChart2, MessageSquare } from 'react-feather'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
-import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
-import { useOnClickOutside } from '../../hooks/useOnClickOutside'
-import useToggle from '../../hooks/useToggle'
+import Logo from '../../assets/svg/logo.js'
+import Bridge from '../../assets/svg/bridge.js'
+import Pool from '../../assets/svg/pool.js'
+import Swap from '../../assets/svg/swap.js'
+import Farm from '../../assets/svg/farm.js'
+import Home from '../../assets/svg/home.js'
+import Lending from '../../assets/svg/lending.js'
+import fusd from '../../assets/svg/fuse-dollar.svg'
+import useRampWidget from '../../hooks/useRamp'
+import Settings from '../../components/Settings'
 
-import { ExternalLink } from '../../theme'
-
-const StyledMenuIcon = styled(MenuIcon)`
-  path {
-    stroke: ${({ theme }) => theme.text1};
-  }
-`
-
-const StyledMenuButton = styled.button`
-  width: 100%;
-  height: 100%;
-  border: none;
-  background-color: transparent;
-  margin: 0;
-  padding: 0;
-  height: 35px;
-  background-color: ${({ theme }) => theme.bg3};
-
-  padding: 0.15rem 0.5rem;
-  border-radius: 0.5rem;
-
-  :hover,
-  :focus {
-    cursor: pointer;
-    outline: none;
-    background-color: ${({ theme }) => theme.bg4};
-  }
-
-  svg {
-    margin-top: 2px;
-  }
-`
-
+const activeClassName = 'ACTIVE'
 const StyledMenu = styled.div`
-  margin-left: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
   border: none;
   text-align: left;
+  z-index: 100;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: none;
+  `};
+`
+
+const Ramp = styled.div`
+  cursor: pointer;
+  justify-content: space-evenly;
+
+  position: absolute;
+  display: flex;
+  width: 85%;
+  height: 40px;
+  bottom: 60px;
+  left: 7%;
+  padding: 0px 16px;
+  > span {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    line-height: 41px;
+    background: linear-gradient(90deg, #c2f6bf 0%, #f7fa9a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  ::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(90deg, #c2f6bf 0%, #f7fa9a 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
+  div {
+    display: flex;
+    img {
+      margin: auto;
+      margin-right: 10px;
+    }
+  }
+`
+
+const UniIcon = styled.div`
+  padding: 0.45rem;
+  > svg {
+    padding: 0.35rem;
+  }
+  > svg #icon {
+    padding: 0.35rem;
+
+    stroke: ${({ theme }) => theme.text2};
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 7.5rem;
+    `}
+  }
+  > svg #icon2 {
+    padding: 0.35rem;
+
+    fill: ${({ theme }) => theme.text2};
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 7.5rem;
+
+    `}
+  }
 `
 
 const MenuFlyout = styled.span`
-  min-width: 8.125rem;
-  background-color: ${({ theme }) => theme.bg3};
+  width: 100%;
+  height: 94vh;
+  background-color: ${({ theme }) => theme.bg1};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 0.5rem;
-  padding: 0.5rem;
   display: flex;
   flex-direction: column;
-  font-size: 1rem;
-  position: absolute;
-  top: 3rem;
-  right: 0rem;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 58px;
   z-index: 100;
+  color: white;
 `
 
-const MenuItem = styled(ExternalLink)`
-  flex: 1;
-  padding: 0.5rem 0.5rem;
+const MenuItemInternal = styled(NavLink).attrs({
+  activeClassName
+})`
+  height: 14%;
+  text-decoration: none;
+  font-size: 1.05em;
+  padding-left: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  .icon {
+    fill: #b5b9d3;
+  }
+  .icon2 {
+    stroke: #b5b9d3;
+  }
   color: ${({ theme }) => theme.text2};
   :hover {
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text2};
     cursor: pointer;
     text-decoration: none;
+    background-color: rgba(17, 18, 25, 0.4);
+    .icon {
+      fill: white;
+    }
+    .icon2 {
+      stroke: white;
+    }
   }
-  > svg {
-    margin-right: 8px;
+
+  &.${activeClassName} {
+    color: white;
+    background-color: #111219;
+    .icon {
+      fill: white;
+    }
+    .icon2 {
+      stroke: white;
+    }
   }
 `
 
-const CODE_LINK = 'https://github.com/fuseio/fuseswap-interface'
+const MenuItemWrapper = styled.div`
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+`
 
-export default function Menu() {
+const MenuWrapper = styled.div`
+  display: block;
+  height: 60%;
+  width: 100%;
+`
+
+const SubMenuWrapper = styled.div`
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 40%;
+`
+
+const IconWrapper = styled.div<{ size?: number }>`
+  ${({ theme }) => theme.flexColumnNoWrap};
+  width: 100%;
+  display: inline;
+  margin-left: 1rem;
+  margin-right: 0.5rem;
+  width: 24px;
+  line-height: 70px;
+`
+
+export default function Sidebar() {
   const node = useRef<HTMLDivElement>()
-  const [open, toggle] = useToggle(false)
-
-  useOnClickOutside(node, open ? toggle : undefined)
+  const openRampWidget = useRampWidget()
 
   return (
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
     <StyledMenu ref={node as any}>
-      <StyledMenuButton onClick={toggle}>
-        <StyledMenuIcon />
-      </StyledMenuButton>
-      {open && (
-        <MenuFlyout>
-          <MenuItem id="link" href="https://fuse.io">
-            <Info size={14} />
-            About
-          </MenuItem>
-          <MenuItem id="link" href="https://docs.fuse.io/fuseswap/overview">
-            <BookOpen size={14} />
-            Docs
-          </MenuItem>
-          <MenuItem id="link" href={CODE_LINK}>
-            <Code size={14} />
-            Code
-          </MenuItem>
-          <MenuItem id="link" href="https://discord.com/invite/jpPMeSZ">
-            <MessageCircle size={14} />
-            Discord
-          </MenuItem>
-          <MenuItem id="link" href="https://t.me/fuseswap">
-            <MessageSquare size={14} />
-            Telegram
-          </MenuItem>
-          <MenuItem id="link" href="https://explorer.fuse.io/">
-            <BarChart2 size={14} />
-            Explorer
-          </MenuItem>
-          <MenuItem id="link" href="https://info.fuseswap.com">
-            <PieChart size={14} />
-            Charts
-          </MenuItem>
-        </MenuFlyout>
-      )}
+      <MenuFlyout>
+        <MenuWrapper>
+          <UniIcon>
+            <Logo></Logo>
+          </UniIcon>
+          <MenuItemInternal to="/home">
+            <MenuItemWrapper>
+              <IconWrapper>
+                <Home />
+              </IconWrapper>
+              <span> Home</span>
+            </MenuItemWrapper>
+          </MenuItemInternal>
+          <MenuItemInternal to="/swap">
+            <MenuItemWrapper>
+              <IconWrapper>
+                <Swap />
+              </IconWrapper>
+              <span>Swap</span>
+            </MenuItemWrapper>
+          </MenuItemInternal>
+          <MenuItemInternal to="/pool">
+            <MenuItemWrapper>
+              <IconWrapper>
+                <Pool />
+              </IconWrapper>
+              <span>Pool</span>
+            </MenuItemWrapper>
+          </MenuItemInternal>
+          <MenuItemInternal to="/bridge">
+            <MenuItemWrapper>
+              <IconWrapper>
+                <Bridge />
+              </IconWrapper>
+              <span>Bridge</span>
+            </MenuItemWrapper>
+          </MenuItemInternal>
+          <MenuItemInternal to="/farm">
+            <MenuItemWrapper>
+              <IconWrapper>
+                <Farm />
+              </IconWrapper>
+              <span>Farm</span>
+            </MenuItemWrapper>
+          </MenuItemInternal>
+          <MenuItemInternal to="/lending">
+            <MenuItemWrapper>
+              <IconWrapper>
+                <Lending />
+              </IconWrapper>
+              <span>Lending</span>
+            </MenuItemWrapper>
+          </MenuItemInternal>
+        </MenuWrapper>
+        <SubMenuWrapper>
+          <Settings />
+          <Ramp onClick={openRampWidget}>
+            <div>
+              <img src={fusd} width="24px" height="24px" />
+            </div>
+            <span>Buy Fuse Dollar</span>{' '}
+          </Ramp>
+        </SubMenuWrapper>
+      </MenuFlyout>
     </StyledMenu>
   )
 }

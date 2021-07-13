@@ -488,7 +488,6 @@ export default function RemoveLiquidity({
             onDismiss={handleDismissConfirmation}
             attemptingTxn={attemptingTxn}
             hash={txHash ? txHash : ''}
-            currency={currencyB}
             content={() => (
               <ConfirmationModalContent
                 title={'You will receive'}

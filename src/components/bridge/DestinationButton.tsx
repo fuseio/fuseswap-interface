@@ -6,15 +6,15 @@ import { BridgeDirection } from '../../state/bridge/hooks'
 export const Button = styled.button<{ isActive?: boolean }>`
   display: flex;
   align-items: center;
-  padding: 0.95rem 1.25rem;
-  background-color: ${({ theme }) => theme.bg12};
+  padding: 0.75rem 1rem;
+  background-color: #202230;
   border-radius: 16px;
   min-width: 160px;
   max-width: 100%;
   border-width: 2px;
   border-style: solid;
   color: ${({ color }) => color};
-  border-color: ${({ theme }) => theme.bg12};
+  border-color: ${({ theme }) => theme.white};
   font-weight: 500;
   outline: 0;
 

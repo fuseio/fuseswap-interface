@@ -8,6 +8,12 @@ import { CurrencyAmount } from '@fuseio/fuse-swap-sdk'
 import { useBridgeFee, useCalculatedBridgeFee, BridgeDirection } from '../../state/bridge/hooks'
 import { useCurrency } from '../../hooks/Tokens'
 
+
+export const Active = styled.button<{ isActive?: boolean }>`
+  display: flex;
+  ${({ isActive }) => isActive && 'display:none'}
+`
+
 const AdvancedDetailsFooter = styled.div<{ show: boolean }>`
   padding-top: calc(16px + 2rem);
   padding-bottom: 20px;
@@ -38,12 +44,13 @@ function BridgeDetails({
   const fee = useBridgeFee(inputCurrencyId, bridgeDirection)
   const calculatedFee = useCalculatedBridgeFee(inputCurrencyId, inputAmount, bridgeDirection)
 
-  const feePercentage = fee ? Number(fee) * 100 : 0
-  const parsedCalculatedFee = calculatedFee ? Number(calculatedFee) : 0
+  const feePercentage = Number(fee) * 100
+  const parsedCalculatedFee = Number(calculatedFee)
   const show = parsedCalculatedFee > 0
 
   return (
-    <AdvancedDetailsFooter show={show}>
+    <Active isActive={true }>
+      <AdvancedDetailsFooter show={show}>
       <AutoColumn gap="md" style={{ padding: '0 20px' }}>
         <RowBetween style={{ flexWrap: 'wrap' }}>
           <RowFixed>
@@ -60,6 +67,7 @@ function BridgeDetails({
         </RowBetween>
       </AutoColumn>
     </AdvancedDetailsFooter>
+    </Active>
   )
 }
 
