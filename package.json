@@ -4,6 +4,7 @@
   "homepage": ".",
   "private": true,
   "devDependencies": {
+    "@ramp-network/ramp-instant-sdk": "^2.4.3",
     "@ethersproject/experimental": "^5.0.1",
     "@fuseio/fuse-swap-default-token-list": "~2.0.0",
     "@fuseio/fuse-swap-sdk": "^3.1.1",
@@ -117,16 +118,13 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@apollo/react-hooks": "^4.0.0",
-    "apollo-boost": "^0.4.9",
-    "apollo-cache-inmemory": "^1.6.6",
-    "apollo-link-http": "^1.5.17",
+    "@apollo/client": "^3.3.21",
+    "@types/webfontloader": "^1.6.33",
     "bignumber.js": "^9.0.1",
-    "event-emitter": "^0.3.5",
-    "graphql": "^15.5.0",
-    "graphql-request": "^3.4.0",
-    "graphql-tag": "^2.11.0",
-    "react-apollo": "^3.1.5",
-    "superagent": "^6.1.0"
+    "dayjs": "^1.10.6",
+    "graphql": "^15.5.1",
+    "react-content-loader": "^6.0.3",
+    "react-promise-tracker": "^2.1.0",
+    "webfontloader": "^1.6.28"
   }
 }
