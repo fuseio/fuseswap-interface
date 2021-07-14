@@ -3,16 +3,32 @@ import { useSelector, useDispatch } from 'react-redux'
 import * as Sentry from '@sentry/react'
 import { useCallback, useMemo } from 'react'
 import { useAsyncMemo } from 'use-async-memo'
-import { typeInput, Field, BridgeTransactionStatus, selectBridgeDirection, selectCurrency } from './actions'
-import { Currency, CurrencyAmount, ChainId } from '@fuseio/fuse-swap-sdk'
+import {
+  typeInput,
+  Field,
+  BridgeTransactionStatus,
+  selectBridgeDirection,
+  selectCurrency,
+  setRecipient
+} from './actions'
+import { Currency, CurrencyAmount, ChainId, Token } from '@fuseio/fuse-swap-sdk'
 import { useCurrencyBalances } from '../wallet/hooks'
 import { useActiveWeb3React, useChain } from '../../hooks'
 import { tryParseAmount } from '../swap/hooks'
-import { DEFAULT_CONFIRMATIONS_LIMIT, HOME_TO_FOREIGN_FEE_TYPE_HASH } from '../../constants/bridge'
-import { useCurrency, useToken } from '../../hooks/Tokens'
+import { DEFAULT_CONFIRMATIONS_LIMIT } from '../../constants/bridge'
+import { useCurrency } from '../../hooks/Tokens'
 import { getMinMaxPerTxn } from './limits'
-import { getHomeMultiAMBErc20ToErc677Contract } from '../../utils'
-import { formatEther, formatUnits } from 'ethers/lib/utils'
+import {
+  getBridgeType,
+  getMultiBridgeFee,
+  getNativeAMBBridgeFee,
+  calculateMultiBridgeFee,
+  calculateNativeAMBBridgeFee,
+  getBscFuseInverseLibrary,
+  isAddress,
+  calculateBnbNativeAMBBridgeFee,
+  getBnbNativeAMBBridgeFee
+} from '../../utils'
 import useParsedQueryString from '../../hooks/useParsedQueryString'
 import {
   FUSE_ERC20_TO_ERC677_BRIDGE_HOME_ADDRESS,
@@ -24,7 +40,9 @@ export enum BridgeType {
   ETH_FUSE_NATIVE = 'ETH_FUSE_NATIVE',
   ETH_FUSE_ERC677_TO_ERC677 = 'ETH_FUSE_ERC677_TO_ERC677',
   ETH_FUSE_ERC20_TO_ERC677 = 'ETH_FUSE_ERC20_TO_ERC677',
-  BSC_FUSE_ERC20_TO_ERC677 = 'BSC_FUSE_ERC20_TO_ERC677'
+  BSC_FUSE_ERC20_TO_ERC677 = 'BSC_FUSE_ERC20_TO_ERC677',
+  BSC_FUSE_NATIVE = 'BSC_FUSE_NATIVE',
+  BSC_FUSE_BNB_NATIVE = 'BSC_FUSE_BNB_NATIVE'
 }
 
 export enum BridgeDirection {
@@ -59,10 +77,16 @@ export function useDerivedBridgeInfo(
     typedValue,
     bridgeTransactionStatus,
     confirmations,
-    [Field.INPUT]: { currencyId: inputCurrencyId }
+    [Field.INPUT]: { currencyId: inputCurrencyId },
+    recipient
   } = useBridgeState()
 
   const inputCurrency = useCurrency(inputCurrencyId, 'Bridge')
+
+  // we fetch currencyId from Token for consistency
+  const currencyId = useMemo(() => {
+    return inputCurrency instanceof Token ? inputCurrency.address : inputCurrency?.symbol
+  }, [inputCurrency])
 
   const currencies: { [field in Field]?: Currency } = useMemo(
     () => ({
@@ -87,7 +111,7 @@ export function useDerivedBridgeInfo(
 
   const { [Field.INPUT]: inputAmount } = parsedAmounts
 
-  const minMaxAmount = useAsyncMemo(async () => {
+  const minMaxAmount: { minAmount: string; maxAmount: string } | undefined = useAsyncMemo(async () => {
     if (!inputCurrencyId || !chainId || !library || !account || !bridgeDirection) return
     try {
       return await getMinMaxPerTxn(inputCurrencyId, bridgeDirection, inputCurrency?.decimals, isHome, library, account)
@@ -114,7 +138,16 @@ export function useDerivedBridgeInfo(
     inputError = inputError ?? 'Enter an amount'
   }
 
-  if (minMaxAmount && Number(typedValue) < Number(minMaxAmount.minAmount)) {
+  if (recipient && !isAddress(recipient)) {
+    inputError = inputError ?? 'Enter a valid address'
+  }
+
+  if (
+    minMaxAmount &&
+    minMaxAmount.minAmount &&
+    minMaxAmount.maxAmount &&
+    Number(typedValue) < Number(minMaxAmount.minAmount)
+  ) {
     inputError = inputError ?? `Below minimum limit (${minMaxAmount.minAmount})`
   }
 
@@ -133,7 +166,7 @@ export function useDerivedBridgeInfo(
     inputError,
     bridgeTransactionStatus,
     confirmations,
-    inputCurrencyId
+    inputCurrencyId: currencyId
   }
 }
 
@@ -164,6 +197,7 @@ export function useBridgeActionHandlers(): {
   onFieldInput: (typedValue: string) => void
   onSelectBridgeDirection: (direction: BridgeDirection) => void
   onSelectCurrency: (currencyId: string | undefined) => void
+  onSetRecipient: (recipient: string) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -188,69 +222,109 @@ export function useBridgeActionHandlers(): {
     [dispatch]
   )
 
-  return { onFieldInput, onSelectBridgeDirection, onSelectCurrency }
+  const onSetRecipient = useCallback(
+    (recipient: string) => {
+      dispatch(setRecipient(recipient))
+    },
+    [dispatch]
+  )
+
+  return { onFieldInput, onSelectBridgeDirection, onSelectCurrency, onSetRecipient }
 }
 
-export function useBridgeFee(tokenAddress: string | undefined, bridgeDirection: BridgeDirection | undefined) {
+export function useBridgeFee(
+  tokenAddress: string | undefined,
+  bridgeDirection: BridgeDirection | undefined
+): string | undefined {
   const { account, library } = useActiveWeb3React()
   const { isHome } = useChain()
 
   return useAsyncMemo(async () => {
-    if (!isHome || !account || !library || !tokenAddress || !bridgeDirection) return
+    if (!account || !library || !tokenAddress || !bridgeDirection) return
 
+    let method: (...args: Array<any>) => Promise<any>, args: Array<any>
     try {
-      let address
-      if (bridgeDirection === BridgeDirection.FUSE_TO_BSC) {
-        address = BINANCE_ERC20_TO_ERC677_HOME_BRIDGE_ADDRESS
-      } else if (bridgeDirection === BridgeDirection.FUSE_TO_ETH) {
-        address = FUSE_ERC20_TO_ERC677_BRIDGE_HOME_ADDRESS
-      } else {
-        return
+      const bridgeType = getBridgeType(tokenAddress, bridgeDirection)
+
+      switch (bridgeType) {
+        case BridgeType.ETH_FUSE_ERC20_TO_ERC677:
+          if (!isHome) return
+          method = getMultiBridgeFee
+          args = [tokenAddress, FUSE_ERC20_TO_ERC677_BRIDGE_HOME_ADDRESS, library, account, isHome]
+          break
+        case BridgeType.BSC_FUSE_ERC20_TO_ERC677:
+          if (!isHome) return
+          method = getMultiBridgeFee
+          args = [tokenAddress, BINANCE_ERC20_TO_ERC677_HOME_BRIDGE_ADDRESS, library, account, isHome]
+          break
+        case BridgeType.BSC_FUSE_NATIVE:
+          method = getNativeAMBBridgeFee
+          args = [isHome, getBscFuseInverseLibrary(isHome), account]
+          break
+        case BridgeType.BSC_FUSE_BNB_NATIVE:
+          method = getBnbNativeAMBBridgeFee
+          args = [isHome, getBscFuseInverseLibrary(isHome), account]
+          break
+        default:
+          return
       }
 
-      const contract = getHomeMultiAMBErc20ToErc677Contract(address, library, account)
-      const fee = await contract.getFee(HOME_TO_FOREIGN_FEE_TYPE_HASH, tokenAddress)
-      return formatEther(fee)
+      const fee = await method(...args)
+      return fee
     } catch (error) {
       Sentry.captureException(error)
       console.error(error)
       return
     }
-  }, [isHome, account, library, tokenAddress])
+  }, [isHome, account, library, tokenAddress, bridgeDirection])
 }
 
 export function useCalculatedBridgeFee(
   tokenAddress: string | undefined,
   currencyAmount: CurrencyAmount | undefined,
   bridgeDirection: BridgeDirection | undefined
-) {
+): string | undefined {
   const { account, library } = useActiveWeb3React()
   const { isHome } = useChain()
-  const token = useToken(tokenAddress)
-  const amount = currencyAmount?.raw?.toString()
 
   return useAsyncMemo(async () => {
-    if (!isHome || !account || !library || !tokenAddress || !amount || !token || !bridgeDirection) return
+    if (!tokenAddress || !currencyAmount || !account || !library || !bridgeDirection) return
 
+    let method: (...args: Array<any>) => Promise<any>, args: Array<any>
     try {
-      let address
-      if (bridgeDirection === BridgeDirection.FUSE_TO_BSC) {
-        address = BINANCE_ERC20_TO_ERC677_HOME_BRIDGE_ADDRESS
-      } else if (bridgeDirection === BridgeDirection.FUSE_TO_ETH) {
-        address = FUSE_ERC20_TO_ERC677_BRIDGE_HOME_ADDRESS
-      } else {
-        return
+      const bridgeType = getBridgeType(tokenAddress, bridgeDirection)
+
+      switch (bridgeType) {
+        case BridgeType.ETH_FUSE_ERC20_TO_ERC677:
+          if (!isHome) return
+          method = calculateMultiBridgeFee
+          args = [currencyAmount, FUSE_ERC20_TO_ERC677_BRIDGE_HOME_ADDRESS, library, account]
+          break
+        case BridgeType.BSC_FUSE_ERC20_TO_ERC677:
+          if (!isHome) return
+          method = calculateMultiBridgeFee
+          args = [currencyAmount, BINANCE_ERC20_TO_ERC677_HOME_BRIDGE_ADDRESS, library, account]
+          break
+        case BridgeType.BSC_FUSE_NATIVE:
+          method = calculateNativeAMBBridgeFee
+          args = [currencyAmount, isHome, getBscFuseInverseLibrary(isHome), account]
+          break
+        case BridgeType.BSC_FUSE_BNB_NATIVE:
+          method = calculateBnbNativeAMBBridgeFee
+          args = [currencyAmount, isHome, getBscFuseInverseLibrary(isHome), account]
+          break
+        default:
+          return
       }
 
-      const contract = getHomeMultiAMBErc20ToErc677Contract(address, library, account)
-      const fee = await contract.calculateFee(HOME_TO_FOREIGN_FEE_TYPE_HASH, tokenAddress, amount)
-      return formatUnits(fee, token.decimals)
+      const fee = await method(...args)
+      return fee
     } catch (error) {
       Sentry.captureException(error)
       console.error(error)
       return
     }
-  }, [isHome, account, amount, library, tokenAddress])
+  }, [isHome, tokenAddress, account, currencyAmount, library])
 }
 
 export function useDetectBridgeDirection(selectedBridgeDirection?: BridgeDirection) {
@@ -275,8 +349,14 @@ export function useDefaultsFromURLSearch() {
   const parsedQs = useParsedQueryString()
 
   const inputCurrencyId = parsedQs.inputCurrencyId?.toString()
+  const amount = parsedQs.amount?.toString()
+  const recipient = parsedQs.recipient?.toString()
+  const sourceChain = Number(parsedQs.sourceChain)
 
   return {
-    inputCurrencyId
+    inputCurrencyId,
+    amount,
+    sourceChain,
+    recipient
   }
 }

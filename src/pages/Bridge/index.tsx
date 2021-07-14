@@ -1,9 +1,9 @@
-import React, { useCallback, useContext, useState, useEffect } from 'react'
+import React, { useCallback, useContext, useState, useEffect, useMemo } from 'react'
 import * as Sentry from '@sentry/react'
 import AppBody from '../AppBody'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
-import { Currency, TokenAmount } from '@fuseio/fuse-swap-sdk'
+import { Currency, TokenAmount, ChainId } from '@fuseio/fuse-swap-sdk'
 import { currencyId } from '../../utils/currencyId'
 import {
   useBridgeActionHandlers,
@@ -42,7 +42,7 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../state'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import BridgeDetails from '../../components/bridge/BridgeDetails'
-import { getBridge, getApprovalAddress } from '../../utils'
+import { getBridge, getApprovalAddress, supportRecipientTransfer } from '../../utils'
 import DestinationButton from '../../components/bridge/DestinationButton'
 import FeeModal from '../../components/FeeModal'
 import TokenMigrationModal from '../../components/TokenMigration'
@@ -54,15 +54,21 @@ export default function Bridge() {
   const { account, chainId, library } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
   const dispatch = useDispatch<AppDispatch>()
+  const { addChain, isAddChainEnabled } = useAddChain()
 
-  const { inputCurrencyId: defaultInputCurrencyId } = useDefaultsFromURLSearch()
+  const {
+    inputCurrencyId: defaultInputCurrencyId,
+    sourceChain,
+    amount,
+    recipient: defaultRecipient
+  } = useDefaultsFromURLSearch()
 
   const [selectedBridgeDirection, setSelectedBridgeDirection] = useState<BridgeDirection | undefined>()
   const bridgeDirection = useDetectBridgeDirection(selectedBridgeDirection)
 
   const [migrationCurrency, setMigrationCurrency] = useState<Currency | undefined>()
 
-  const { independentField, typedValue } = useBridgeState()
+  const { independentField, typedValue, recipient } = useBridgeState()
 
   const {
     currencies,
@@ -79,7 +85,7 @@ export default function Bridge() {
 
   const { updateCompletedBridgeTransfer } = useUserActionHandlers()
 
-  const { onFieldInput, onSelectBridgeDirection, onSelectCurrency } = useBridgeActionHandlers()
+  const { onFieldInput, onSelectBridgeDirection, onSelectCurrency, onSetRecipient } = useBridgeActionHandlers()
 
   // unsupportedBridge modal
   const [modalOpen, setModalOpen] = useState<boolean>(false)
@@ -87,6 +93,8 @@ export default function Bridge() {
   const [feeModalOpen, setFeeModalOpen] = useState(false)
 
   const [migrateModalOpen, setMigrateModalOpen] = useState(false)
+
+  const [addTokenModalOpen, setAddTokenModalOpen] = useState(false)
 
   const formattedAmounts = {
     [independentField]: typedValue
@@ -108,13 +116,17 @@ export default function Bridge() {
 
   const toggleWalletModal = useWalletModalToggle()
 
-  const { isHome, isEtheruem } = useChain()
+  const { isHome, isEtheruem, isBsc } = useChain()
 
   const approvalAddress = getApprovalAddress(inputCurrencyId, bridgeDirection)
 
   const [approval, approveCallback] = useApproveCallback(parsedAmounts[Field.INPUT], approvalAddress)
 
   const addTransaction = useTransactionAdder()
+
+  const supportRecipient = useMemo(() => {
+    return supportRecipientTransfer(inputCurrencyId, bridgeDirection) && !isHome
+  }, [bridgeDirection, inputCurrencyId, isHome])
 
   async function onTransfer() {
     if (!chainId || !library || !account || !inputCurrency?.symbol || !bridgeDirection) return
@@ -139,17 +151,22 @@ export default function Bridge() {
         account,
         dispatch,
         isHome,
-        addTransaction
+        addTransaction,
+        recipient
       )
 
-      await bridge?.executeTransaction()
+      const response = await bridge?.executeTransaction()
+      if (response) {
+        if (isEtheruem || isBsc) {
+          await fuseApi.fund(account)
+        }
 
-      if (isEtheruem) {
-        await fuseApi.fund(account)
+        onSetRecipient('')
+        updateCompletedBridgeTransfer()
+        setAddTokenModalOpen(true)
       }
 
       onFieldInput('')
-      updateCompletedBridgeTransfer()
     } catch (error) {
       if (error?.code !== 4001) {
         Sentry.captureException(error, {
@@ -193,9 +210,19 @@ export default function Bridge() {
     [onSelectCurrency]
   )
 
+  // set defaults from url params
+
   useEffect(() => {
     onSelectCurrency(defaultInputCurrencyId)
   }, [defaultInputCurrencyId, onSelectCurrency])
+
+  useEffect(() => {
+    if (amount) onFieldInput(amount)
+  }, [amount, onFieldInput])
+
+  useEffect(() => {
+    if (defaultRecipient && supportRecipient) onSetRecipient(defaultRecipient)
+  }, [defaultRecipient, onSetRecipient, supportRecipient])
 
   return (
     <>

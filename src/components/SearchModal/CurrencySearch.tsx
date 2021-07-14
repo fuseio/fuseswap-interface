@@ -23,6 +23,7 @@ import { useTokenComparator } from './sorting'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { useBridgeState, BridgeDirection } from '../../state/bridge/hooks'
+import { FUSE_BNB } from '../../constants'
 
 interface CurrencySearchProps {
   isOpen: boolean
@@ -77,9 +78,14 @@ export function CurrencySearch({
 
   const filteredBridgeTokens: Token[] = useMemo(() => {
     const tokens = Object.values(allTokens)
-
-    return showMultiBridgeTokens ? tokens.filter(token => (token as WrappedTokenInfo).tokenInfo?.isMultiBridge) : tokens
-  }, [allTokens, showMultiBridgeTokens])
+    return showMultiBridgeTokens
+      ? tokens.filter(
+          token => (token as WrappedTokenInfo).tokenInfo?.isMultiBridge || token.address === FUSE_BNB.address
+        )
+      : listType === 'Bridge'
+      ? tokens.filter(token => token.address !== FUSE_BNB.address)
+      : tokens
+  }, [allTokens, listType, showMultiBridgeTokens])
 
   const filteredTokens: Token[] = useMemo(() => {
     if (isAddressSearch) return searchToken ? [searchToken] : []
@@ -184,7 +190,7 @@ export function CurrencySearch({
           {({ height }) => (
             <CurrencyList
               height={height}
-              showETH={showETHToken && bridgeDirection !== BridgeDirection.FUSE_TO_BSC}
+              showETH={showETHToken}
               currencies={filteredSortedTokens}
               onCurrencySelect={handleCurrencySelect}
               otherCurrency={otherSelectedCurrency}

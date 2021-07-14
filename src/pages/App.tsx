@@ -27,6 +27,7 @@ import Bridge from './Bridge'
 import { RedirectToDefault } from './redirects'
 import Menu from '../components/Menu'
 
+
 const AppWrapper = styled.div`
     display: flex;
     flex-direction: row;
@@ -78,7 +79,7 @@ export default function App() {
           <Route component={GoogleAnalyticsReporter} />
             <Zindex>
             <Web3ReactManager>
-                <Switch>
+               <Switch>
                 <Route exact strict path="/home" component={Home} />
                 <Route exact strict path="/swap" component={Swap} />
                 <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
@@ -93,10 +94,8 @@ export default function App() {
                 <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
                 <Route exact strict path="/bridge" component={Bridge} />
                 <Route exact strict path="/farm" component={Farm} />
-                  <Route exact path="/farm/:currencyIdA" component={FarmSelect} />
-                  <Route exact strict path="/lending" component={Lending} />
-
-
+                <Route exact path="/farm/:currencyIdA" component={FarmSelect} />
+                <Route exact strict path="/lending" component={Lending} />
                 <Route component={RedirectToDefault} />
               </Switch>
               </Web3ReactManager>

@@ -13,6 +13,8 @@ import { RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import { getNativeCurrencySymbol } from '../../utils'
 import { BINANCE_MAINNET_CHAINID, BINANCE_TESTNET_CHAINID } from '../../constants'
+import useRampWidget from '../../hooks/useRamp'
+import { darken } from 'polished'
 
 const HeaderFrame = styled.div`
   padding-right: 2.6%;
@@ -62,39 +64,6 @@ const AccountElement = styled.div<{ active: boolean }>`
   }
 `
 
-const TestnetWrapper = styled.div`
-  white-space: nowrap;
-  width: fit-content;
-  margin-left: 10px;
-  pointer-events: auto;
-`
-
-const NetworkCard = styled('div')`
-  border: 2px solid ${({ theme }) => theme.bg3};
-  color: ${({ theme }) => theme.text1};
-  width: fit-content;
-  margin-right: 10px;
-  border-radius: 12px;
-  padding: 8px 12px;
-`
-
-const HeaderControls = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`
-
-const BalanceText = styled('div')`
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  margin: auto;
-  flex: shrink;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin:auto;
-    width:100%
-  `};
-`
-
 export const NETWORK_LABELS: any = {
   [ChainId.MAINNET]: 'Ethereum',
   [ChainId.RINKEBY]: 'Rinkeby',
@@ -124,6 +93,7 @@ function accounts(account: any, userEthBalance: any, chainId: any) {
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
+  const openRampWidget = useRampWidget()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
 

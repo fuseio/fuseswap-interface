@@ -40,6 +40,8 @@ import { currencyId } from '../../utils/currencyId'
 import { PoolPriceBar } from './PoolPriceBar'
 import TokenMigrationModal from '../../components/TokenMigration'
 import { WrappedTokenInfo } from '../../state/lists/hooks'
+import { FUSE_CHAIN } from '../../constants/chains'
+import useAddChain from '../../hooks/useAddChain'
 
 export default function AddLiquidity({
   match: {
@@ -50,6 +52,7 @@ export default function AddLiquidity({
   const { account, chainId, library } = useActiveWeb3React()
   const { isHome } = useChain()
   const theme = useContext(ThemeContext)
+  const { addChain, isAddChainEnabled } = useAddChain()
 
   const currencyA = useCurrency(currencyIdA)
   const currencyB = useCurrency(currencyIdB)
@@ -344,6 +347,7 @@ export default function AddLiquidity({
             onDismiss={handleDismissConfirmation}
             attemptingTxn={attemptingTxn}
             hash={txHash}
+            currency={currencyB ?? undefined}
             content={() => (
               <ConfirmationModalContent
                 title={noLiquidity ? 'You are creating a pool' : 'You will receive'}
@@ -426,7 +430,11 @@ export default function AddLiquidity({
             )}
 
             {!account ? (
-              <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+              isAddChainEnabled ? (
+                <ButtonLight onClick={() => addChain(FUSE_CHAIN)}>Switch to Fuse</ButtonLight>
+              ) : (
+                <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+              )
             ) : (
               <AutoColumn gap={'md'}>
                 {(approvalA === ApprovalState.NOT_APPROVED ||

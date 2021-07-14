@@ -1,7 +1,7 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@fuseio/fuse-swap-sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
-import { injected, walletlink } from '../connectors'
+import { injected, walletconnect } from '../connectors'
 import { unwrapOrThrow } from '../utils'
 
 export const ROUTER_ADDRESS = '0xFB76e9E7d88E308aB530330eD90e84a952570319'
@@ -36,6 +36,18 @@ export const UNDER_MAINTENANCE = unwrapOrThrow('UNDER_MAINTENANCE') === 'true'
 
 export const BINANCE_TESTNET_CHAINID = 97
 export const BINANCE_MAINNET_CHAINID = 56
+
+export const BSC_NATIVE_TO_ERC677_BRIDGE_HOME_ADDRESS = unwrapOrThrow('BSC_NATIVE_TO_ERC677_BRIDGE_HOME_ADDRESS')
+export const BSC_NATIVE_TO_ERC677_BRIDGE_FOREIGN_ADDRESS = unwrapOrThrow('BSC_NATIVE_TO_ERC677_BRIDGE_FOREIGN_ADDRESS')
+
+export const BSC_FUSE_TOKEN_ADDRESS = unwrapOrThrow('BSC_FUSE_TOKEN_ADDRESS')
+export const PEG_SWAP_ADDRESS = unwrapOrThrow('PEG_SWAP_ADDRESS')
+
+export const BSC_BNB_NATIVE_TO_ERC20_BRIDGE_HOME_ADDRESS = unwrapOrThrow('BSC_BNB_NATIVE_TO_ERC20_BRIDGE_HOME_ADDRESS')
+export const BSC_BNB_NATIVE_TO_ERC20_BRIDGE_FOREIGN_ADDRESS = unwrapOrThrow(
+  'BSC_BNB_NATIVE_TO_ERC20_BRIDGE_FOREIGN_ADDRESS'
+)
+export const BNB_FOREIGN_TOKEN_ADDRESS = unwrapOrThrow('BNB_FOREIGN_TOKEN_ADDRESS')
 
 // a list of tokens by chain
 type ChainTokenList = {
@@ -79,11 +91,20 @@ export const FUSE_WBTC = new Token(
 )
 export const FUSE_WETH = new Token(
   ChainId.FUSE,
-  '0xd8Bf72f3e163B9CF0C73dFdCC316417A5ac20670',
+  '0xa722c13135930332eb3d749b2f0906559d2c5b99',
   18,
   'WETH',
   'Wrapped Ether on Fuse'
 )
+export const FUSE_FUSD = new Token(
+  ChainId.FUSE,
+  '0x249BE57637D8B013Ad64785404b24aeBaE9B098B',
+  18,
+  'fUSD',
+  'Fuse Dollar'
+)
+
+export const FUSE_BNB = new Token(ChainId.FUSE, BNB_FOREIGN_TOKEN_ADDRESS, 18, 'BNB', 'BNB on Fuse')
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
@@ -98,7 +119,7 @@ const WETH_ONLY: ChainTokenList = {
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT, COMP, MKR],
-  [ChainId.FUSE]: [...WETH_ONLY[ChainId.FUSE], FUSE_DAI, FUSE_USDC, FUSE_USDT, FUSE_WBTC, FUSE_WETH]
+  [ChainId.FUSE]: [...WETH_ONLY[ChainId.FUSE], FUSE_USDC, FUSE_USDT, FUSE_WBTC, FUSE_WETH, FUSE_FUSD]
 }
 
 /**
@@ -115,14 +136,14 @@ export const CUSTOM_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: To
 export const SUGGESTED_BASES: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT],
-  [ChainId.FUSE]: [...WETH_ONLY[ChainId.FUSE], FUSE_DAI, FUSE_USDC, FUSE_USDT, FUSE_WBTC, FUSE_WETH]
+  [ChainId.FUSE]: [...WETH_ONLY[ChainId.FUSE], FUSE_USDC, FUSE_USDT, FUSE_WBTC, FUSE_WETH, FUSE_FUSD]
 }
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   ...WETH_ONLY,
   [ChainId.MAINNET]: [...WETH_ONLY[ChainId.MAINNET], DAI, USDC, USDT],
-  [ChainId.FUSE]: [...WETH_ONLY[ChainId.FUSE], FUSE_DAI, FUSE_USDC, FUSE_USDT, FUSE_WBTC, FUSE_WETH]
+  [ChainId.FUSE]: [...WETH_ONLY[ChainId.FUSE], FUSE_DAI, FUSE_USDC, FUSE_USDT, FUSE_WBTC, FUSE_WETH, FUSE_FUSD]
 }
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
@@ -170,32 +191,32 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     href: null,
     color: '#E8831D'
   },
-  // WALLET_CONNECT: {
-  //   connector: walletconnect,
-  //   name: 'WalletConnect',
-  //   iconName: 'walletConnectIcon.svg',
-  //   description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
-  //   href: null,
-  //   color: '#4196FC',
-  //   mobile: true
-  // },
-  WALLET_LINK: {
-    connector: walletlink,
-    name: 'Coinbase Wallet',
-    iconName: 'coinbaseWalletIcon.svg',
-    description: 'Use Coinbase Wallet app on mobile device',
+  WALLET_CONNECT: {
+    connector: walletconnect,
+    name: 'WalletConnect',
+    iconName: 'walletConnectIcon.svg',
+    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
     href: null,
-    color: '#315CF5'
-  },
-  COINBASE_LINK: {
-    name: 'Open in Coinbase Wallet',
-    iconName: 'coinbaseWalletIcon.svg',
-    description: 'Open in Coinbase Wallet app.',
-    href: 'https://go.cb-w.com/mtUDhEZPy1',
-    color: '#315CF5',
-    mobile: true,
-    mobileOnly: true
+    color: '#4196FC',
+    mobile: true
   }
+  // WALLET_LINK: {
+  //   connector: walletlink,
+  //   name: 'Coinbase Wallet',
+  //   iconName: 'coinbaseWalletIcon.svg',
+  //   description: 'Use Coinbase Wallet app on mobile device',
+  //   href: null,
+  //   color: '#315CF5'
+  // },
+  // COINBASE_LINK: {
+  //   name: 'Open in Coinbase Wallet',
+  //   iconName: 'coinbaseWalletIcon.svg',
+  //   description: 'Open in Coinbase Wallet app.',
+  //   href: 'https://go.cb-w.com/mtUDhEZPy1',
+  //   color: '#315CF5',
+  //   mobile: true,
+  //   mobileOnly: true
+  // }
   // FORTMATIC: {
   //   connector: fortmatic,
   //   name: 'Fortmatic',
